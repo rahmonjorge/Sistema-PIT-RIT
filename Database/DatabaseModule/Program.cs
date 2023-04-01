@@ -1,20 +1,35 @@
-using DatabaseModule.Services;
 using Database.Auth;
+using DatabaseModule.Services;
+using DatabaseModule.Entities;
+using MongoDB.Driver;
+using MongoDB.Bson;
 
-var builder = WebApplication.CreateBuilder(args);
+/// WEBAPP AREA ///
+public static class DatabaseModuleMain
+{
 
-// Additional configuration is required to successfully run gRPC on macOS.
-// For instructions on how to configure Kestrel and gRPC clients on macOS, visit https://go.microsoft.com/fwlink/?linkid=2099682
+    public static void Main(string[] args)
+    {
+        WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddGrpc();
+        // Additional configuration is required to successfully run gRPC on macOS.
+        // For instructions on how to configure Kestrel and gRPC clients on macOS, visit https://go.microsoft.com/fwlink/?linkid=2099682
 
-var app = builder.Build();
+        // Add services to the container.
+        builder.Services.AddGrpc();
 
-// Configure the HTTP request pipeline.
-// app.MapGrpcService<GreeterService>();
-app.MapGrpcService<DatabaseService>();
+        WebApplication app = builder.Build();
 
-app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
+        // preciso chamar um método que está em UserDatabaseService a partir do SessionDatabaseService.
+        // app.Services.GetService(typeof(UserDatabaseService)); <------------ sera que é essa?
 
-app.Run();
+        // Configure the HTTP request pipeline.
+
+        app.MapGrpcService<UserService>();
+        app.MapGrpcService<SessionService>();
+
+        app.MapGet("/", () => "gRPC server is up and running. Waiting for gRPC clients.");
+
+        app.Run();
+    }
+}

@@ -55,7 +55,6 @@ message UpdateUserRequest {
 message DeleteUserRequest {
     string id = 1;
 }
-
  
 service SessionAuthService {
     rpc CreateSession (SessionObj) returns (SessionObj) {}

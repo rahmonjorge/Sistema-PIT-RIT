@@ -1,7 +1,7 @@
+namespace DatabaseModule.Services;
+
 using Grpc.Core;
 using DatabaseModule;
-
-namespace DatabaseModule.Services;
 
 public class GreeterService : Greeter.GreeterBase
 {
