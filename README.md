@@ -2,7 +2,7 @@
 
 ## Descrição
 
-Este projeto tem como objetivo desenvolver um sistema que auxilie os professores da **Universidade Federal Rural de Pernambuco (UFRPE)**¹ na elaboração e gestão dos relatórios exigidos pelo **Processo de Avaliação RIT**. O RIT é um instrumento de avaliação institucional que visa acompanhar o desempenho dos docentes em relação às atividades de ensino, pesquisa, extensão e gestão. O sistema deve permitir que os professores cadastrem seus dados pessoais, acadêmicos e profissionais, registrem suas atividades realizadas no período avaliativo, gerem relatórios parciais e finais em formato PDF e acompanhem o resultado da avaliação.
+Este projeto tem como objetivo desenvolver um sistema que auxilie os professores da Universidade Federal Rural de Pernambuco (UFRPE) na elaboração e gestão dos relatórios exigidos pelo **Processo de Avaliação RIT**. O RIT é um instrumento de avaliação institucional que visa acompanhar o desempenho dos docentes em relação às atividades de ensino, pesquisa, extensão e gestão. O sistema deve permitir que os professores cadastrem seus dados pessoais, acadêmicos e profissionais, registrem suas atividades realizadas no período avaliativo, gerem relatórios parciais e finais em formato PDF e acompanhem o resultado da avaliação.
 
 ## Funcionalidades
 
