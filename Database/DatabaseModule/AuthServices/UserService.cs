@@ -1,4 +1,4 @@
-namespace Database.Auth;
+namespace Database.Auth.Services;
 
 using Grpc.Core;
 using DatabaseModule.Entities;
@@ -19,14 +19,13 @@ public class UserService : UserAuthService.UserAuthServiceBase
 
     public override Task<BasicUserResponse> CreateUser(CreateUserRequest request, ServerCallContext context)
     {
+        if (request == null) throw new RpcException(new Status(StatusCode.InvalidArgument, "Null request."));
         Console.WriteLine($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
 
-        User newUser = new User()
+        User newUser = new User(request.Email, request.Image)
         {
-            Email = request.Email,
             EmailVerified = request.EmailVerified.ToDateTime(),
-            Nome = request.Name,
-            Image = request.Image
+            Nome = request.Name
         };
 
         _controller.Create(newUser);
@@ -60,6 +59,8 @@ public class UserService : UserAuthService.UserAuthServiceBase
 
         // Find user
         User userFound = _controller.Read("email", request.Email);
+        if (userFound == null) throw new RpcException(new Status(StatusCode.NotFound, "User with email: '" + request.Email + "' not found."));
+        Console.WriteLine(userFound);
 
         // Send responses
         BasicUserResponse response = CreateBasicUserResponse(userFound);
@@ -72,7 +73,18 @@ public class UserService : UserAuthService.UserAuthServiceBase
     public override Task<BasicUserResponse> GetUserByAccount(GetUserByAccountRequest request, ServerCallContext context)
     {
         Console.WriteLine($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
-        throw new RpcException(new Status(StatusCode.Unimplemented,$"{context.Method} unimplemented by server"));
+        
+        User dummy = new User("DUMMYEMAIL","DUMMYIMAGE")
+        {
+            EmailVerified = DateTime.UtcNow,
+            Nome = "DUMMYIMAGE"
+        };
+        
+        BasicUserResponse response = CreateBasicUserResponse(dummy);
+
+        Console.WriteLine("Response sent: " + response);
+
+        return Task.FromResult(response);
     }
 
     public override Task<BasicUserResponse> UpdateUser(UpdateUserRequest request, ServerCallContext context)
@@ -83,12 +95,10 @@ public class UserService : UserAuthService.UserAuthServiceBase
         User userFound = _controller.Read("_id", request.Id);
         if (userFound == null) throw new RpcException(new Status(StatusCode.NotFound, "User with id: '" + request.Id + "' not found."));
         
-        User replacementUser = new User()
+        User replacementUser = new User(request.Email, request.Image)
         {
-            Email = request.Email,
             EmailVerified = request.EmailVerified.ToDateTime(),
-            Nome = request.Name,
-            Image = request.Image
+            Nome = request.Name
         };
 
         // Replace user

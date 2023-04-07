@@ -1,9 +1,8 @@
-namespace Database.Auth;
+namespace Database.Auth.Services;
 
 using Grpc.Core;
-using DatabaseModule.Entities;
 using DatabaseModule.Controllers;
-using Google.Protobuf.WellKnownTypes;
+using Database.Auth;
 
 public class AccountService : AccountAuthService.AccountAuthServiceBase
 {
@@ -20,7 +19,18 @@ public class AccountService : AccountAuthService.AccountAuthServiceBase
     public override Task<AdapterAccount> LinkAccount(AdapterAccount request, ServerCallContext context)
     {
         Console.WriteLine($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
-        throw new RpcException(new Status(StatusCode.Unimplemented,$"{context.Method} unimplemented by server"));
+
+        AdapterAccount response = new AdapterAccount()
+        {
+            UserId = "DUMMY USER ID",
+            Type = Auth.ProtoProviderType.Oauth,
+            Provider = "DUMMY PROVIDER",
+            ProviderAccountId = "DUMMY PROVIDER'S ID"
+        };
+
+        Console.WriteLine("Response sent: " + response);
+
+        return Task.FromResult(response);
     }
 
     public override Task<AdapterAccount> UnlinkAccount(UnlinkAccountRequest request, ServerCallContext context)

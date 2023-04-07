@@ -1,4 +1,4 @@
-namespace Database.Auth;
+namespace Database.Auth.Services;
 
 using Grpc.Core;
 using DatabaseModule.Entities;
@@ -36,7 +36,15 @@ public class SessionService : SessionAuthService.SessionAuthServiceBase
     public override Task<GetSessionAndUserResponse> GetSessionAndUser(GetSessionAndUserRequest request, ServerCallContext context)
     {
         Console.WriteLine($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
-        throw new RpcException(new Status(StatusCode.Unimplemented,$"{context.Method} unimplemented by server"));
+
+        GetSessionAndUserResponse response = new GetSessionAndUserResponse()
+        {
+
+        };
+
+        Console.WriteLine("Response sent: " + response);
+
+        return Task.FromResult(response);
     }
 
     public override Task<SessionObj> UpdateSession(UpdateSessionRequest request, ServerCallContext context)

@@ -6,10 +6,12 @@ namespace DatabaseModule.Controllers;
 
 public class AccountController
 {
+    private readonly string collectionName = "accounts";
     private IMongoCollection<VerificationToken> _collection;
 
     public AccountController()
     {
+        /*
         /// WARNING: Check if IP address is added at cloud.mongodb.com.
 
         // setting up mongodb connection
@@ -17,7 +19,7 @@ public class AccountController
         if (connectionString == null) Console.WriteLine("'MONGODB_URI' environmental variable not found.");
         MongoClient client = new MongoClient(connectionString);
         IMongoDatabase database = client.GetDatabase("pit-rit");
-        _collection = database.GetCollection<VerificationToken>("accounts");
-        
+        */
+        _collection = DatabaseModuleMain._database.GetCollection<VerificationToken>(collectionName);
     }
 }

@@ -10,7 +10,7 @@ public class User
     [BsonElement("_id")]
     public ObjectId Id { get; set; }
     [BsonElement("email")]
-    public string? Email { get; set; }
+    public string Email { get; set; }
     [BsonElement("registration_complete")]
     public bool CadastroCompleto { get; set; }
     [BsonElement("email_verified")]
@@ -19,6 +19,8 @@ public class User
     public string? Nome { get; set; }
     [BsonElement("departamento")]
     public string? Departamento { get; set; }
+    [BsonElement("image")]
+    public string Image { get; set; }
     [BsonElement("carga_horaria")]
     public string? CargaHoraria { get; set; }
     [BsonElement("regime")]
@@ -27,6 +29,15 @@ public class User
     public string? Siape { get; set; }
     [BsonElement("vinculo")]
     public string? Vinculo { get; set; }
-    [BsonElement("image")]
-    public string? Image { get; set; }
+
+    public User(string email, string image)
+    {
+        this.Email = email;
+        this.Image = image;
+    }
+
+    public override string ToString()
+    {
+        return $"Nome: {this.Nome}, Image: {this.Image}";
+    }
 }

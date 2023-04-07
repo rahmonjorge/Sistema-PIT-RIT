@@ -1,15 +1,22 @@
-using Database.Auth;
-using DatabaseModule.Services;
-using DatabaseModule.Entities;
+using Database.Auth.Services;
+using Database.Sheets.Services;
 using MongoDB.Driver;
-using MongoDB.Bson;
 
 /// WEBAPP AREA ///
 public static class DatabaseModuleMain
 {
+    public static IMongoDatabase _database;
 
     public static void Main(string[] args)
     {
+        /// WARNING: Check if IP address is added at cloud.mongodb.com.
+
+        // setting up mongodb connection
+        string? connectionString = Environment.GetEnvironmentVariable("MONGODB_URI");
+        if (connectionString == null) Console.WriteLine("'MONGODB_URI' environmental variable not found.");
+        MongoClient client = new MongoClient(connectionString);
+        _database = client.GetDatabase("pit-rit");
+
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
         // Additional configuration is required to successfully run gRPC on macOS.
@@ -24,9 +31,15 @@ public static class DatabaseModuleMain
         // app.Services.GetService(typeof(UserDatabaseService)); <------------ sera que é essa?
 
         // Configure the HTTP request pipeline.
-
-        app.MapGrpcService<UserService>();
+        
+        // Auth Services
+        app.MapGrpcService<AccountService>();
         app.MapGrpcService<SessionService>();
+        app.MapGrpcService<UserService>();
+        app.MapGrpcService<VerificationTokenService>();
+        
+        // Spreadsheets Services
+        app.MapGrpcService<SheetService>();
 
         app.MapGet("/", () => "gRPC server is up and running. Waiting for gRPC clients.");
 
