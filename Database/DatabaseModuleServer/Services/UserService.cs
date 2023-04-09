@@ -8,13 +8,10 @@ using Google.Protobuf.WellKnownTypes;
 public class UserService : UserAuthService.UserAuthServiceBase
 {
     private readonly ILogger<UserService> _logger;
-    private UserController _controller;
 
     public UserService(ILogger<UserService> logger)
     {
         _logger = logger;
-
-        _controller = new UserController();
     }
 
     public override Task<BasicUserResponse> CreateUser(CreateUserRequest request, ServerCallContext context)
@@ -28,7 +25,7 @@ public class UserService : UserAuthService.UserAuthServiceBase
             Nome = request.Name
         };
 
-        _controller.Create(newUser);
+        DatabaseModuleMain.users.Create(newUser);
 
         BasicUserResponse response = CreateBasicUserResponse(newUser);
 
@@ -42,7 +39,7 @@ public class UserService : UserAuthService.UserAuthServiceBase
         Console.WriteLine($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
 
         // Find user
-        User userFound = _controller.Read("_id", request.Id);
+        User userFound = DatabaseModuleMain.users.Read("_id", request.Id);
         if (userFound == null) throw new RpcException(new Status(StatusCode.NotFound, "User with id: '" + request.Id + "' not found."));
 
         // Send responses
@@ -58,7 +55,7 @@ public class UserService : UserAuthService.UserAuthServiceBase
         Console.WriteLine($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
 
         // Find user
-        User userFound = _controller.Read("email", request.Email);
+        User userFound = DatabaseModuleMain.users.Read("email", request.Email);
         if (userFound == null) throw new RpcException(new Status(StatusCode.NotFound, "User with email: '" + request.Email + "' not found."));
         Console.WriteLine(userFound);
 
@@ -70,10 +67,16 @@ public class UserService : UserAuthService.UserAuthServiceBase
         return Task.FromResult(response);
     }
 
+    // TODO: PROBABLY A MESS
     public override Task<BasicUserResponse> GetUserByAccount(GetUserByAccountRequest request, ServerCallContext context)
     {
         Console.WriteLine($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
-        
+
+        // Find Account
+        Account account = DatabaseModuleMain.accounts.Read("provider_id", request.ProviderAccountId, "provider", request.Provider);
+        if (account == null || account.TokenId == null) 
+            throw new RpcException(new Status(StatusCode.NotFound, $"Account with provider_id: '{request.ProviderAccountId}' and provider: '{request.Provider}' not found."));
+
         User dummy = new User("DUMMYEMAIL","DUMMYIMAGE")
         {
             EmailVerified = DateTime.UtcNow,
@@ -92,7 +95,7 @@ public class UserService : UserAuthService.UserAuthServiceBase
         Console.WriteLine($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
 
         // Find user
-        User userFound = _controller.Read("_id", request.Id);
+        User userFound = DatabaseModuleMain.users.Read("_id", request.Id);
         if (userFound == null) throw new RpcException(new Status(StatusCode.NotFound, "User with id: '" + request.Id + "' not found."));
         
         User replacementUser = new User(request.Email, request.Image)
@@ -102,7 +105,7 @@ public class UserService : UserAuthService.UserAuthServiceBase
         };
 
         // Replace user
-        var result = _controller.Update("_id", request.Id, replacementUser);
+        var result = DatabaseModuleMain.users.Update("_id", request.Id, replacementUser);
         if (!result) throw new RpcException(new Status(StatusCode.Aborted, "Not acknowledged"));
 
         BasicUserResponse response = CreateBasicUserResponse(replacementUser);
@@ -117,11 +120,11 @@ public class UserService : UserAuthService.UserAuthServiceBase
         Console.WriteLine($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
 
         // Find user
-        User userFound = _controller.Read("_id", request.Id);
+        User userFound = DatabaseModuleMain.users.Read("_id", request.Id);
         if (userFound == null) throw new RpcException(new Status(StatusCode.NotFound, "User with id: '" + request.Id + "' not found."));
         
         // Delete user
-        var result = _controller.Delete("_id", request.Id);
+        var result = DatabaseModuleMain.users.Delete("_id", request.Id);
         if (!result) throw new RpcException(new Status(StatusCode.Aborted, "Not acknowledged"));
 
         // Send response
@@ -132,7 +135,7 @@ public class UserService : UserAuthService.UserAuthServiceBase
         return Task.FromResult(response);
     }
 
-    private BasicUserResponse CreateBasicUserResponse(User user)
+    public static BasicUserResponse CreateBasicUserResponse(User user)
     {
         return new BasicUserResponse
         {

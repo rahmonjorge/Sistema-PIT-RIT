@@ -8,14 +8,10 @@ using Google.Protobuf.WellKnownTypes;
 public class SessionService : SessionAuthService.SessionAuthServiceBase
 {
     private readonly ILogger<SessionService> _logger;
-    private SessionController _controller;
-
 
     public SessionService(ILogger<SessionService> logger)
     {
         _logger = logger;
-
-        _controller = new SessionController();
     }
 
     public override Task<SessionObj> CreateSession(SessionObj request, ServerCallContext context)
@@ -24,7 +20,7 @@ public class SessionService : SessionAuthService.SessionAuthServiceBase
 
         Session newSession = new Session(request.SessionToken, request.UserId, request.Expires.ToDateTime());
 
-        _controller.Create(newSession);
+        DatabaseModuleMain.sessions.Create(newSession);
 
         SessionObj response = CreateSessionObj(newSession);
 
@@ -37,11 +33,17 @@ public class SessionService : SessionAuthService.SessionAuthServiceBase
     {
         Console.WriteLine($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
 
-        GetSessionAndUserResponse response = new GetSessionAndUserResponse()
-        {
+        // Find Session
+        Session session = DatabaseModuleMain.sessions.Read("token",request.SessionToken);
+        if (session == null) throw new RpcException(new Status(StatusCode.NotFound, $"Session with token: '{request.SessionToken}' not found."));
+        Console.WriteLine($"Session Found: {session}");
 
-        };
-
+        // Find User
+        User user = DatabaseModuleMain.users.Read("_id",session.UserId.ToString());
+        if (user == null) throw new RpcException(new Status(StatusCode.NotFound, $"User with id: '{session.UserId.ToString()}' not found."));
+        
+        GetSessionAndUserResponse response = CreateGetSessionAndUserResponse(session, user);
+        
         Console.WriteLine("Response sent: " + response);
 
         return Task.FromResult(response);
@@ -52,13 +54,13 @@ public class SessionService : SessionAuthService.SessionAuthServiceBase
         Console.WriteLine($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
 
         // Find Session
-        Session sessionFound = _controller.Read("token", request.SessionToken);
+        Session sessionFound = DatabaseModuleMain.sessions.Read("token", request.SessionToken);
         if (sessionFound == null) throw new RpcException(new Status(StatusCode.NotFound, "Session with token: '" + request.SessionToken + "' not found."));
         
         Session replacementSession = new Session(request.SessionToken, request.UserId, request.Expires.ToDateTime());
 
         // Replace Session
-        var result = _controller.Update("token", request.SessionToken, replacementSession);
+        var result = DatabaseModuleMain.sessions.Update("token", request.SessionToken, replacementSession);
         if (!result) throw new RpcException(new Status(StatusCode.Aborted, "Not acknowledged"));
 
         SessionObj response = CreateSessionObj(replacementSession);
@@ -73,11 +75,11 @@ public class SessionService : SessionAuthService.SessionAuthServiceBase
         Console.WriteLine($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
 
         // Find session
-        Session sessionFound = _controller.Read("token", request.SessionToken);
+        Session sessionFound = DatabaseModuleMain.sessions.Read("token", request.SessionToken);
         if (sessionFound == null) throw new RpcException(new Status(StatusCode.NotFound, "Session with token: '" + request.SessionToken + "' not found."));
         
         // Delete session
-        var result = _controller.Delete("token", request.SessionToken);
+        var result = DatabaseModuleMain.sessions.Delete("token", request.SessionToken);
         if (!result) throw new RpcException(new Status(StatusCode.Aborted, "Deletion not acknowledged"));
 
         // Send response
@@ -95,6 +97,15 @@ public class SessionService : SessionAuthService.SessionAuthServiceBase
             SessionToken = session.Token,
             UserId = session.UserId.ToString(),
             Expires = Timestamp.FromDateTime(session.Expires)
+        };
+    }
+
+    private GetSessionAndUserResponse CreateGetSessionAndUserResponse(Session session, User user)
+    {
+        return new GetSessionAndUserResponse()
+        {
+            Session = CreateSessionObj(session),
+            User = UserService.CreateBasicUserResponse(user)
         };
     }
 }

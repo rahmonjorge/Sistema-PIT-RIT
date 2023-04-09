@@ -8,13 +8,10 @@ using Google.Protobuf.WellKnownTypes;
 public class VerificationTokenService : VerificationTokenAuthService.VerificationTokenAuthServiceBase
 {
     private readonly ILogger<VerificationTokenService> _logger;
-    private VerificationTokenController _controller;
 
     public VerificationTokenService(ILogger<VerificationTokenService> logger)
     {
         _logger = logger;
-
-        _controller = new VerificationTokenController();
     }
 
     public override Task<VerificationTokenObj> CreateVerificationToken(VerificationTokenObj request, ServerCallContext context)
@@ -26,7 +23,7 @@ public class VerificationTokenService : VerificationTokenAuthService.Verificatio
             Expires = request.Expires.ToDateTime()
         };
 
-        _controller.Create(newToken);
+        DatabaseModuleMain.tokens.Create(newToken);
 
         VerificationTokenObj response = CreateVerificationTokenObj(newToken);
 

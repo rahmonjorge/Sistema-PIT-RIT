@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package database.sheets;
+
+service SpreadsheetService {
+    rpc GetUser (GetUserRequest) returns (UserResponse) {}
+    rpc GetSheet (GetSheetRequest) returns (SheetResponse) {}
+}
+
+message GetUserRequest {
+    string id = 1;
+}
+
+message UserResponse {
+    string id = 1;
+    string email = 2;
+    string name = 3;
+    string siape = 4;
+    string departamento = 5;
+    string vinculo = 6;
+    string regime = 7;
+    string reducao = 8;
+}
+
+
+message GetSheetRequest {
+    string userId = 1;
+    string type = 2;
+    int32 ano = 3;
+}
+
+message SheetResponse {
+    string id = 1;
+    float ch_grad = 2;
+    float ch_pos = 3;
+    repeated bool ensino = 4;
+    float ch_ensino = 5;
+    repeated bool pesquisa = 6;
+    float ch_pesquisa = 7;
+    repeated bool extensao = 8;
+    float ch_extensao = 9;
+    repeated bool adm = 10;
+    float ch_adm = 11;
+}

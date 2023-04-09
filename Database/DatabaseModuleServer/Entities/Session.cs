@@ -20,4 +20,9 @@ public class Session
         this.UserId = new ObjectId(userId);
         this.Expires = expires;
     }
+
+    public override string ToString()
+    {
+        return $"Token: {Token}, User Id: {UserId}, Expires: {Expires}";
+    }
 }

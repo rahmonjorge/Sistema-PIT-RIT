@@ -25,7 +25,7 @@ message UserResponse {
 
 message GetSheetRequest {
     string userId = 1;
-    bool pitOrRit = 2;
+    string type = 2;
     int32 ano = 3;
 }
 

@@ -4,6 +4,8 @@ using MongoDB.Bson;
 
 namespace DatabaseModule.Controllers;
 
+// TODO: CHANGE TO SINGLETON!!
+// TODO: ADD INTERFACE WITH DYNAMIC TYPES FOR CRUD
 public class UserController
 {
     private readonly string collectionName = "users";
@@ -11,17 +13,6 @@ public class UserController
 
     public UserController()
     {
-        /*
-        /// WARNING: Check if IP address is added at cloud.mongodb.com.
-
-        // setting up mongodb connection
-        
-        string? connectionString = Environment.GetEnvironmentVariable("MONGODB_URI");
-        if (connectionString == null) Console.WriteLine("'MONGODB_URI' environmental variable not found.");
-        MongoClient client = new MongoClient(connectionString);
-        IMongoDatabase database = client.GetDatabase("pit-rit");
-        */
-
         _collection = DatabaseModuleMain._database.GetCollection<User>(collectionName);
 
         // testing connection
