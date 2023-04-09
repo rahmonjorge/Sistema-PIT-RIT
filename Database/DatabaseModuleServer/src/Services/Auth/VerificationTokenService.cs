@@ -1,5 +1,6 @@
 namespace Database.Auth.Services;
 
+using HTools;
 using Grpc.Core;
 using DatabaseModule.Entities;
 using DatabaseModule.Controllers;
@@ -16,7 +17,7 @@ public class VerificationTokenService : VerificationTokenAuthService.Verificatio
 
     public override Task<VerificationTokenObj> CreateVerificationToken(VerificationTokenObj request, ServerCallContext context)
     {
-        Console.WriteLine($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
+        Printer.BlueLn($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
 
         VerificationToken newToken = new VerificationToken(request.Token)
         {
@@ -34,7 +35,7 @@ public class VerificationTokenService : VerificationTokenAuthService.Verificatio
 
     public override Task<VerificationTokenObj> UseVerificationToken(UseVerificationTokenRequest request, ServerCallContext context)
     {
-        Console.WriteLine($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
+        Printer.BlueLn($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
         throw new RpcException(new Status(StatusCode.Unimplemented,$"{context.Method} unimplemented by server"));
     }
 

@@ -28,7 +28,7 @@ public class UserController
         _collection.InsertOne(document);
     }
 
-    public User Read(string key, string value)
+    public async Task<User> Read(string key, string value)
     {
         FilterDefinition<User> filter;
         if (key == "_id")
@@ -36,7 +36,7 @@ public class UserController
         else
             filter = Builders<User>.Filter.Eq(key, value);
         
-        return _collection.Find(filter).FirstOrDefault();
+        return await _collection.Find(filter).FirstOrDefaultAsync();
     }
 
     public bool Update(string key, string value, User document)

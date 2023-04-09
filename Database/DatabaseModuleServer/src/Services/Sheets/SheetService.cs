@@ -10,26 +10,19 @@ using Google.Protobuf;
 public class SheetService : SpreadsheetService.SpreadsheetServiceBase
 {
     private readonly ILogger<SheetService> _logger;
-    private UserController _users;
-    private PitsController _pits;
-    private RitsController _rits;
 
     public SheetService(ILogger<SheetService> logger)
     {
         _logger = logger;
-
-        _users = new UserController();
-        _pits = new PitsController();
-        _rits = new RitsController();
     }
 
-    public override Task<UserResponse> GetUser(GetUserRequest request, ServerCallContext context)
+    public override async Task<UserResponse> GetUser(GetUserRequest request, ServerCallContext context)
     {
         if (request == null) throw new RpcException(new Status(StatusCode.InvalidArgument, "Null request."));
         Console.WriteLine($"'{context.Method}' request received from '{context.Host}' at '{DateTime.UtcNow}': {request}");
         
         // Find user
-        User userFound = _users.Read("_id", request.Id);
+        User userFound = await DatabaseModuleMain.users.Read("_id", request.Id);
         if (userFound == null) throw new RpcException(new Status(StatusCode.NotFound, "User with id: '" + request.Id + "' not found."));
 
         // Send responses
@@ -37,10 +30,9 @@ public class SheetService : SpreadsheetService.SpreadsheetServiceBase
 
         Console.WriteLine("Response sent: " + response);
 
-        return Task.FromResult(response);
-
-
+        return response;
     }
+
     public override Task<SheetResponse> GetSheet(GetSheetRequest request, ServerCallContext context)
     {
         if (request == null) throw new RpcException(new Status(StatusCode.InvalidArgument, "Null request."));
@@ -51,7 +43,7 @@ public class SheetService : SpreadsheetService.SpreadsheetServiceBase
         if (request.Type.ToLower() == "pit")
         {
             // Find
-            PIT pitFound = _pits.Read("user_id",request.UserId);
+            PIT pitFound = DatabaseModuleMain.pits.Read("user_id",request.UserId);
             if (pitFound == null) throw new RpcException(new Status(StatusCode.NotFound, "User with id: '" + request.UserId + "' not found."));
 
             // Send response
@@ -59,7 +51,7 @@ public class SheetService : SpreadsheetService.SpreadsheetServiceBase
         }
         else if (request.Type.ToLower() == "rit")
         {
-            RIT ritFound = _rits.Read("user_id",request.UserId);
+            RIT ritFound = DatabaseModuleMain.rits.Read("user_id",request.UserId);
             if (ritFound == null) throw new RpcException(new Status(StatusCode.NotFound, "User with id: '" + request.UserId + "' not found."));
 
             // Send response

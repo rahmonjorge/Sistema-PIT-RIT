@@ -32,12 +32,12 @@ public class AccountController
         return _collection.Find(filter).FirstOrDefault();
     }
 
-    public Account Read(string key1, string value1, string key2, string value2)
+    public async Task<Account> Read(string key1, string value1, string key2, string value2)
     {
         FilterDefinition<Account> filter = 
             Builders<Account>.Filter.Eq(key1, value1) &
             Builders<Account>.Filter.Eq(key2, value2);
-        return _collection.Find(filter).FirstOrDefault();
+        return await _collection.Find(filter).FirstOrDefaultAsync();
     }
 
     public DeleteResult Delete(string key1, string value1, string key2, string value2)

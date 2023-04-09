@@ -1,5 +1,6 @@
 namespace Database.Auth.Services;
 
+using HTools;
 using Grpc.Core;
 using DatabaseModule.Entities;
 using DatabaseModule.Controllers;
@@ -16,7 +17,7 @@ public class SessionService : SessionAuthService.SessionAuthServiceBase
 
     public override Task<SessionObj> CreateSession(SessionObj request, ServerCallContext context)
     {
-        Console.WriteLine($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
+        Printer.BlueLn($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
 
         Session newSession = new Session(request.SessionToken, request.UserId, request.Expires.ToDateTime());
 
@@ -29,9 +30,9 @@ public class SessionService : SessionAuthService.SessionAuthServiceBase
         return Task.FromResult(response);
     }
 
-    public override Task<GetSessionAndUserResponse> GetSessionAndUser(GetSessionAndUserRequest request, ServerCallContext context)
+    public override async Task<GetSessionAndUserResponse> GetSessionAndUser(GetSessionAndUserRequest request, ServerCallContext context)
     {
-        Console.WriteLine($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
+        Printer.BlueLn($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
 
         // Find Session
         Session session = DatabaseModuleMain.sessions.Read("token",request.SessionToken);
@@ -39,19 +40,19 @@ public class SessionService : SessionAuthService.SessionAuthServiceBase
         Console.WriteLine($"Session Found: {session}");
 
         // Find User
-        User user = DatabaseModuleMain.users.Read("_id",session.UserId.ToString());
+        User user = await DatabaseModuleMain.users.Read("_id",session.UserId.ToString());
         if (user == null) throw new RpcException(new Status(StatusCode.NotFound, $"User with id: '{session.UserId.ToString()}' not found."));
         
         GetSessionAndUserResponse response = CreateGetSessionAndUserResponse(session, user);
         
         Console.WriteLine("Response sent: " + response);
 
-        return Task.FromResult(response);
+        return response;
     }
 
     public override Task<SessionObj> UpdateSession(UpdateSessionRequest request, ServerCallContext context)
     {
-        Console.WriteLine($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
+        Printer.BlueLn($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
 
         // Find Session
         Session sessionFound = DatabaseModuleMain.sessions.Read("token", request.SessionToken);
@@ -72,7 +73,7 @@ public class SessionService : SessionAuthService.SessionAuthServiceBase
 
     public override Task<SessionObj> DeleteSession(DeleteSessionRequest request, ServerCallContext context)
     {
-        Console.WriteLine($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
+        Printer.BlueLn($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
 
         // Find session
         Session sessionFound = DatabaseModuleMain.sessions.Read("token", request.SessionToken);

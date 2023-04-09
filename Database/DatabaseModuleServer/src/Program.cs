@@ -1,7 +1,9 @@
-using Database.Auth.Services;
-using Database.Sheets.Services;
 using MongoDB.Driver;
 using DatabaseModule.Controllers;
+
+using Database.Auth.Services;
+using Database.Sheets.Services;
+using Database.Gui.Services;
 
 /// WARNING: Check if IP address is added at cloud.mongodb.com.
 public static class DatabaseModuleMain
@@ -42,6 +44,9 @@ public static class DatabaseModuleMain
         
         // Spreadsheets Services
         app.MapGrpcService<SheetService>();
+
+        // Gui Services
+        app.MapGrpcService<UserGuiService>();
 
         app.MapGet("/", () => "gRPC server is up and running. Waiting for gRPC clients.");
 

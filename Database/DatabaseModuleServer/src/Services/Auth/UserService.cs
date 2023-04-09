@@ -1,5 +1,6 @@
 namespace Database.Auth.Services;
 
+using HTools;
 using Grpc.Core;
 using DatabaseModule.Entities;
 using DatabaseModule.Controllers;
@@ -17,7 +18,7 @@ public class UserService : UserAuthService.UserAuthServiceBase
     public override Task<BasicUserResponse> CreateUser(CreateUserRequest request, ServerCallContext context)
     {
         if (request == null) throw new RpcException(new Status(StatusCode.InvalidArgument, "Null request."));
-        Console.WriteLine($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
+        Printer.BlueLn($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
 
         User newUser = new User(request.Email, request.Image)
         {
@@ -34,12 +35,12 @@ public class UserService : UserAuthService.UserAuthServiceBase
         return Task.FromResult(response);
     }
 
-    public override Task<BasicUserResponse> GetUser(GetUserRequest request, ServerCallContext context)
+    public override async Task<BasicUserResponse> GetUser(GetUserRequest request, ServerCallContext context)
     {
-        Console.WriteLine($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
+        Printer.BlueLn($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
 
         // Find user
-        User userFound = DatabaseModuleMain.users.Read("_id", request.Id);
+        User userFound = await DatabaseModuleMain.users.Read("_id", request.Id);
         if (userFound == null) throw new RpcException(new Status(StatusCode.NotFound, "User with id: '" + request.Id + "' not found."));
 
         // Send responses
@@ -47,15 +48,15 @@ public class UserService : UserAuthService.UserAuthServiceBase
 
         Console.WriteLine("Response sent: " + response);
 
-        return Task.FromResult(response);
+        return response;
     }
 
-    public override Task<BasicUserResponse> GetUserByEmail(GetUserByEmailRequest request, ServerCallContext context)
+    public override async Task<BasicUserResponse> GetUserByEmail(GetUserByEmailRequest request, ServerCallContext context)
     {
-        Console.WriteLine($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
+        Printer.BlueLn($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
 
         // Find user
-        User userFound = DatabaseModuleMain.users.Read("email", request.Email);
+        User userFound = await DatabaseModuleMain.users.Read("email", request.Email);
         if (userFound == null) throw new RpcException(new Status(StatusCode.NotFound, "User with email: '" + request.Email + "' not found."));
         Console.WriteLine(userFound);
 
@@ -64,40 +65,39 @@ public class UserService : UserAuthService.UserAuthServiceBase
 
         Console.WriteLine("Response sent: " + response);
 
-        return Task.FromResult(response);
+        return response;
     }
 
     // TODO: PROBABLY A MESS
-    public override Task<BasicUserResponse> GetUserByAccount(GetUserByAccountRequest request, ServerCallContext context)
+    public override async Task<BasicUserResponse> GetUserByAccount(GetUserByAccountRequest request, ServerCallContext context)
     {
-        Console.WriteLine($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
+        Printer.BlueLn($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
 
         // Find Account
-        Account account = DatabaseModuleMain.accounts.Read("provider_id", request.ProviderAccountId, "provider", request.Provider);
+        Account account = await DatabaseModuleMain.accounts.Read("provider_id", request.ProviderAccountId, "provider", request.Provider);
         if (account == null || account.TokenId == null) 
             throw new RpcException(new Status(StatusCode.NotFound, $"Account with provider_id: '{request.ProviderAccountId}' and provider: '{request.Provider}' not found."));
 
-        User dummy = new User("DUMMYEMAIL","DUMMYIMAGE")
-        {
-            EmailVerified = DateTime.UtcNow,
-            Nome = "DUMMYIMAGE"
-        };
-        
-        BasicUserResponse response = CreateBasicUserResponse(dummy);
+        // Find User
+        User userFound = await DatabaseModuleMain.users.Read("_id",account.UserId);
+        if (userFound == null) throw new RpcException(new Status(StatusCode.NotFound, "User not found."));
+
+        BasicUserResponse response = CreateBasicUserResponse(userFound);
 
         Console.WriteLine("Response sent: " + response);
 
-        return Task.FromResult(response);
+        return response;
     }
 
-    public override Task<BasicUserResponse> UpdateUser(UpdateUserRequest request, ServerCallContext context)
+    public override async Task<BasicUserResponse> UpdateUser(UpdateUserRequest request, ServerCallContext context)
     {
-        Console.WriteLine($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
+        Printer.BlueLn($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
 
         // Find user
-        User userFound = DatabaseModuleMain.users.Read("_id", request.Id);
+        User userFound = await DatabaseModuleMain.users.Read("_id", request.Id);
         if (userFound == null) throw new RpcException(new Status(StatusCode.NotFound, "User with id: '" + request.Id + "' not found."));
         
+        // Create replacement user
         User replacementUser = new User(request.Email, request.Image)
         {
             EmailVerified = request.EmailVerified.ToDateTime(),
@@ -112,15 +112,15 @@ public class UserService : UserAuthService.UserAuthServiceBase
 
         Console.WriteLine("Response sent: " + response);
 
-        return Task.FromResult(response);
+        return response;
     }
 
-    public override Task<BasicUserResponse> DeleteUser(DeleteUserRequest request, ServerCallContext context)
+    public override async Task<BasicUserResponse> DeleteUser(DeleteUserRequest request, ServerCallContext context)
     {
-        Console.WriteLine($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
+        Printer.BlueLn($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
 
         // Find user
-        User userFound = DatabaseModuleMain.users.Read("_id", request.Id);
+        User userFound = await DatabaseModuleMain.users.Read("_id", request.Id);
         if (userFound == null) throw new RpcException(new Status(StatusCode.NotFound, "User with id: '" + request.Id + "' not found."));
         
         // Delete user
@@ -132,7 +132,7 @@ public class UserService : UserAuthService.UserAuthServiceBase
 
         Console.WriteLine("Response sent: " + response);
 
-        return Task.FromResult(response);
+        return response;
     }
 
     public static BasicUserResponse CreateBasicUserResponse(User user)
@@ -141,7 +141,7 @@ public class UserService : UserAuthService.UserAuthServiceBase
         {
             Id = user.Id.ToString(),
             Email = user.Email,
-            CadastroCompleto = false,
+            CadastroCompleto = user.CadastroCompleto,
             EmailVerified = Timestamp.FromDateTime(user.EmailVerified),
             Name = user.Nome,
             Image = user.Image

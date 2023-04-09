@@ -26,4 +26,12 @@ public class RitsController
         
         return _collection.Find(filter).FirstOrDefault();
     }
+
+    public List<int> ReadDistinct(string key)
+    {
+        var filter = Builders<RIT>.Filter.Empty;
+        var anos = _collection.Distinct(r => r.Ano, filter);
+
+        return anos.ToList();
+    }
 }

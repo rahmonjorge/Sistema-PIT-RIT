@@ -1,5 +1,6 @@
 namespace DatabaseModule.Entities;
 
+using Database.Auth;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -7,6 +8,9 @@ public class Account
 {
     [BsonElement("_id")]
     public ObjectId Id { get; set; }
+
+    [BsonElement("user_id")]
+    public string UserId { get; set; }
 
     [BsonElement("provider_type")]
     public ProtoProviderType Type { get; set; }
@@ -38,22 +42,11 @@ public class Account
     [BsonElement("session_state")]
     public string? SessionState { get; set; }
 
-    public Account(string provider, string providerAccountId)
+    public Account(string userId, string provider, string providerAccountId, ProtoProviderType type)
     {
-        this.Type = ProtoProviderType.oauth;
+        this.UserId = userId;
+        this.Type = type;
         this.Provider = provider;
         this.ProviderAccountId = providerAccountId;
     }
-}
-
-public enum ProtoProviderType
-{
-    [BsonRepresentation(BsonType.String)]
-    oidc, 
-    [BsonRepresentation(BsonType.String)]
-    oauth, 
-    [BsonRepresentation(BsonType.String)]
-    email, 
-    [BsonRepresentation(BsonType.String)]
-    credentials
 }
