@@ -1,5 +1,6 @@
 namespace Database.Sheets.Services;
 
+using HTools;
 using Grpc.Core;
 using DatabaseModule.Entities;
 using DatabaseModule.Controllers;
@@ -19,10 +20,10 @@ public class SheetService : SpreadsheetService.SpreadsheetServiceBase
     public override async Task<UserResponse> GetUser(GetUserRequest request, ServerCallContext context)
     {
         if (request == null) throw new RpcException(new Status(StatusCode.InvalidArgument, "Null request."));
-        Console.WriteLine($"'{context.Method}' request received from '{context.Host}' at '{DateTime.UtcNow}': {request}");
+        Printer.LogRequest(request, context.Host, context.Method);
         
         // Find user
-        User userFound = await DatabaseModuleMain.users.Read("_id", request.Id);
+        User userFound = await DatabaseCore.users.ReadAsync("_id", request.Id);
         if (userFound == null) throw new RpcException(new Status(StatusCode.NotFound, "User with id: '" + request.Id + "' not found."));
 
         // Send responses
@@ -36,14 +37,14 @@ public class SheetService : SpreadsheetService.SpreadsheetServiceBase
     public override Task<SheetResponse> GetSheet(GetSheetRequest request, ServerCallContext context)
     {
         if (request == null) throw new RpcException(new Status(StatusCode.InvalidArgument, "Null request."));
-        Console.WriteLine($"'{context.Method}' request received from '{context.Host}': {request}");
+        Printer.LogRequest(request, context.Host, context.Method);
 
         SheetResponse response;
 
         if (request.Type.ToLower() == "pit")
         {
             // Find
-            PIT pitFound = DatabaseModuleMain.pits.Read("user_id",request.UserId);
+            PIT pitFound = DatabaseCore.pits.Read("user_id",request.UserId);
             if (pitFound == null) throw new RpcException(new Status(StatusCode.NotFound, "User with id: '" + request.UserId + "' not found."));
 
             // Send response
@@ -51,7 +52,7 @@ public class SheetService : SpreadsheetService.SpreadsheetServiceBase
         }
         else if (request.Type.ToLower() == "rit")
         {
-            RIT ritFound = DatabaseModuleMain.rits.Read("user_id",request.UserId);
+            RIT ritFound = DatabaseCore.rits.Read("user_id",request.UserId);
             if (ritFound == null) throw new RpcException(new Status(StatusCode.NotFound, "User with id: '" + request.UserId + "' not found."));
 
             // Send response

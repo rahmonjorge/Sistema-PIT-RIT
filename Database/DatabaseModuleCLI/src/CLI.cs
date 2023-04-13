@@ -1,6 +1,7 @@
 using Database.Auth;
 using Grpc.Net.Client;
 using Google.Protobuf.WellKnownTypes;
+using HTools;
 
 using static Database.Auth.VerificationTokenAuthService;
 using static Database.Auth.AccountAuthService;
@@ -9,34 +10,74 @@ namespace DatabaseModuleClient;
 
 static class CLI
 {
+    private static string? error;
+
     public static void Run()
     {
-        Console.WriteLine("GRPC Server Started.");
-
-        var clientChosen = ChooseClientMenu(ClientMain.servicesAvaliable);
-
-        switch (clientChosen)
+        Console.Clear();
+        for (string? input = ""; input != "exit" ; Console.Clear())
         {
-            case "user":
-                UserClientMenu();
-                break;
-            case "session":
-                SessionClientMenu();
-                break;
-            case "sheet":
-                SheetClientMenu();
-                break;
-            case "account":
-                AccountClientMenu();
-                break;
-            case "token":
-                TokenClientMenu();
-                break;
-            default:
-                break;
-        }
+            Printer.PrintRainbowLn("Welcome to the Database Module CLI.");
+            Console.WriteLine("1 - Open services client\n2 - Remote CRUD");
+            Printer.RedLn(error);
 
-        
+            input = Input.GetUserInput();
+            
+            switch(input)
+            {
+                case "1":
+                    ChooseService(ClientMain.servicesAvaliable);
+                    break;
+                case "2":
+                    Console.WriteLine("Work in progress");
+                    break;
+                default:
+                    error = "Invalid input.";
+                    break;
+            }
+        }
+        Printer.GreenLn("Thank you for using the Database Module CLI!");
+        Console.WriteLine("Made by Rahmon Jorge");
+    }
+
+    private static void Exit()
+    {
+        error = null;
+        Console.Clear();
+    }
+
+    private static void ChooseService(string[] clients)
+    {
+        Console.Clear();
+        for (string? input = "" ; input != "exit" ; Console.Clear())
+        {
+            Console.WriteLine($"Choose a service. Services avaliable: {Utils.ArrayToString(clients)}");
+
+            input = Input.GetUserInput("Services>");
+
+            switch (input)
+            {
+                case "user":
+                    UserClientMenu();
+                    break;
+                case "session":
+                    SessionClientMenu();
+                    break;
+                case "sheet":
+                    SheetClientMenu();
+                    break;
+                case "account":
+                    AccountClientMenu();
+                    break;
+                case "token":
+                    TokenClientMenu();
+                    break;
+                default:
+                    Printer.RedLn("Invalid input.");
+                    break;
+            }
+        }
+        Exit();
     }
 
     private static void UserClientMenu()
@@ -45,7 +86,7 @@ static class CLI
         Console.WriteLine("Commands avaliable: create, delete, exit");
         while (true)
         {
-            var args = GetCommand("User Service>");
+            var args = Input.GetCommand("Services>Users>");
 
             switch (args[0])
             {
@@ -59,7 +100,7 @@ static class CLI
                     Console.WriteLine($"Looking for user with id: {id}");
                     var found = ClientMain.userService.GetUser(id);
                     Console.WriteLine($"User '{found.Name}' found. Are you sure you want to delete it? (Y/N)");
-                    var input = GetUserInput();
+                    var input = Input.GetUserInput();
                     if (input == "y")
                     {
                         var result = ClientMain.userService.DeleteUser(id);
@@ -81,7 +122,7 @@ static class CLI
         Console.WriteLine("Commands avaliable: create, get, update, delete, exit");
         while (true)
         {
-            var args = GetCommand("Session Service>");
+            var args = Input.GetCommand("Services>Sessions>");
 
             switch (args[0])
             {
@@ -119,7 +160,7 @@ static class CLI
         Console.WriteLine("Commands avaliable: user, sheet, exit");
         while (true)
         {
-            var args = GetCommand("Sheet Service>");
+            var args = Input.GetCommand("Services>Sheets>");
 
             switch (args[0])
             {
@@ -133,7 +174,7 @@ static class CLI
                 case "sheet":
                     userId = args[1];
                     string type = args[2];
-                    Int32 ano = StringToInt32(args[3]);
+                    Int32 ano = Utils.StringToInt32(args[3]);
                     var getSheetReply = ClientMain.sheetService.GetSheet(userId, type, ano);
                     Console.WriteLine(getSheetReply);
                     break;
@@ -152,40 +193,37 @@ static class CLI
 
     private static void AccountClientMenu()
     {
-        throw new NotImplementedException();
+        Console.WriteLine("Account Service Client started.");
+        Console.WriteLine("Commands avaliable: link, unlink, exit");
+        while (true)
+        {
+            var args = Input.GetCommand("Services>Account>");
+
+            switch (args[0])
+            {
+                case "link":
+                    // var email = args[1];
+                    // Console.WriteLine($"Creating new user with email: {email}");
+                    // ClientMain.userService.CreateUser(email);
+                    break;
+                case "unlink":
+                    // var id = args[1];
+                    // Console.WriteLine($"Looking for user with id: {id}");
+                    // var found = ClientMain.userService.GetUser(id);
+                    // Console.WriteLine($"User '{found.Name}' found. Are you sure you want to delete it? (Y/N)");
+                    // var input = GetUserInput();
+                    // if (input == "y")
+                    // {
+                    //     var result = ClientMain.userService.DeleteUser(id);
+                    //     Console.WriteLine($"User '{result.Name}' successfully removed from database.");
+                    // }
+                    // else continue;
+                    break;
+                case "exit":
+                    return;
+                default:
+                    break;
+            }
+        }
     }
-
-
-    private static string ChooseClientMenu(string[] clients)
-    {
-        Console.WriteLine($"Choose a client. Clients avaliable: {ArrayToString(clients)}");
-
-        var input = GetUserInput();
-
-        if (clients.Contains(input)) return input;
-        else throw new ArgumentNullException("Invalid input.");
-    }
-
-    private static string[] GetCommand(string prefix)
-    {
-        Console.Write(prefix + " ");
-        string? input = Console.ReadLine();
-        if (input == null) throw new ArgumentNullException("Invalid input.");
-        input = input.ToLower();
-        return input.Split(' ');
-    }
-
-    private static string GetUserInput()
-    {
-        Console.Write("-> ");
-        string? input = Console.ReadLine();
-        if (input == null) throw new ArgumentNullException("Invalid input.");
-        return input.ToLower();
-    }
-
-    private static string ArrayToString(string[] array) => string.Join(", ", array);
-
-    private static bool StringToBool(string str) => bool.Parse(str.ToLower());
-
-    private static Int32 StringToInt32(string str) => Int32.Parse(str.ToLower());
 }

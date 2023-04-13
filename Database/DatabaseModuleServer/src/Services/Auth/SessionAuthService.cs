@@ -17,11 +17,11 @@ public class SessionService : SessionAuthService.SessionAuthServiceBase
 
     public override Task<SessionObj> CreateSession(SessionObj request, ServerCallContext context)
     {
-        Printer.BlueLn($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
+        Printer.LogRequest(request, context.Host, context.Method);
 
         Session newSession = new Session(request.SessionToken, request.UserId, request.Expires.ToDateTime());
 
-        DatabaseModuleMain.sessions.Create(newSession);
+        DatabaseCore.sessions.Create(newSession);
 
         SessionObj response = CreateSessionObj(newSession);
 
@@ -32,15 +32,15 @@ public class SessionService : SessionAuthService.SessionAuthServiceBase
 
     public override async Task<GetSessionAndUserResponse> GetSessionAndUser(GetSessionAndUserRequest request, ServerCallContext context)
     {
-        Printer.BlueLn($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
+        Printer.LogRequest(request, context.Host, context.Method);
 
         // Find Session
-        Session session = DatabaseModuleMain.sessions.Read("token",request.SessionToken);
+        Session session = DatabaseCore.sessions.Read("token",request.SessionToken);
         if (session == null) throw new RpcException(new Status(StatusCode.NotFound, $"Session with token: '{request.SessionToken}' not found."));
         Console.WriteLine($"Session Found: {session}");
 
         // Find User
-        User user = await DatabaseModuleMain.users.Read("_id",session.UserId.ToString());
+        User user = await DatabaseCore.users.ReadAsync("_id",session.UserId.ToString());
         if (user == null) throw new RpcException(new Status(StatusCode.NotFound, $"User with id: '{session.UserId.ToString()}' not found."));
         
         GetSessionAndUserResponse response = CreateGetSessionAndUserResponse(session, user);
@@ -52,16 +52,16 @@ public class SessionService : SessionAuthService.SessionAuthServiceBase
 
     public override Task<SessionObj> UpdateSession(UpdateSessionRequest request, ServerCallContext context)
     {
-        Printer.BlueLn($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
+        Printer.LogRequest(request, context.Host, context.Method);
 
         // Find Session
-        Session sessionFound = DatabaseModuleMain.sessions.Read("token", request.SessionToken);
+        Session sessionFound = DatabaseCore.sessions.Read("token", request.SessionToken);
         if (sessionFound == null) throw new RpcException(new Status(StatusCode.NotFound, "Session with token: '" + request.SessionToken + "' not found."));
         
         Session replacementSession = new Session(request.SessionToken, request.UserId, request.Expires.ToDateTime());
 
         // Replace Session
-        var result = DatabaseModuleMain.sessions.Update("token", request.SessionToken, replacementSession);
+        var result = DatabaseCore.sessions.Update("token", request.SessionToken, replacementSession);
         if (!result) throw new RpcException(new Status(StatusCode.Aborted, "Not acknowledged"));
 
         SessionObj response = CreateSessionObj(replacementSession);
@@ -73,14 +73,14 @@ public class SessionService : SessionAuthService.SessionAuthServiceBase
 
     public override Task<SessionObj> DeleteSession(DeleteSessionRequest request, ServerCallContext context)
     {
-        Printer.BlueLn($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
+        Printer.LogRequest(request, context.Host, context.Method);
 
         // Find session
-        Session sessionFound = DatabaseModuleMain.sessions.Read("token", request.SessionToken);
+        Session sessionFound = DatabaseCore.sessions.Read("token", request.SessionToken);
         if (sessionFound == null) throw new RpcException(new Status(StatusCode.NotFound, "Session with token: '" + request.SessionToken + "' not found."));
         
         // Delete session
-        var result = DatabaseModuleMain.sessions.Delete("token", request.SessionToken);
+        var result = DatabaseCore.sessions.Delete("token", request.SessionToken);
         if (!result) throw new RpcException(new Status(StatusCode.Aborted, "Deletion not acknowledged"));
 
         // Send response

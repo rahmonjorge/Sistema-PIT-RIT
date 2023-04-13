@@ -11,6 +11,7 @@
     <Protobuf Include="Protos\database.auth.proto" GrpcServices="Server" />
     <Protobuf Include="Protos\database.gui.proto" GrpcServices="Server" />
     <Protobuf Include="Protos\database.sheets.proto" GrpcServices="Server" />
+    <Protobuf Include="Protos\database.requerimento.proto" GrpcServices="Server" />
   </ItemGroup>
 
   <ItemGroup>

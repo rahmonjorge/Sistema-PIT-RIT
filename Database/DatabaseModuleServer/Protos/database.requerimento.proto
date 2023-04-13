@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package database.requerimento;
+
+service UserService {
+    rpc GetUserInfo (UserIdRequest) returns (UserInfo) {}
+}
+
+message UserIdRequest {
+    string id = 1;
+}
+
+message UserInfo {
+    string name = 1;
+    string siape = 2;
+    string dpto = 3;
+    string regime = 4;
+}

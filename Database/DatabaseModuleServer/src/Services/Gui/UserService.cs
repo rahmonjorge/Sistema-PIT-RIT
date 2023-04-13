@@ -18,17 +18,17 @@ public class UserGuiService : UserService.UserServiceBase
 
     public override async Task<UserInfo> CompletarCadastro(CompletarCadastroRequest request, ServerCallContext context)
     {
-        Printer.BlueLn($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
+        Printer.LogRequest(request, context.Host, context.Method);
 
         // Find user
-        User found = await DatabaseModuleMain.users.Read("_id", request.Id);
+        User found = await DatabaseCore.users.ReadAsync("_id", request.Id);
         if (found == null) throw new RpcException(new Status(StatusCode.NotFound, "User with id: '" + request.Id + "' not found."));
 
         // Create completed user
         User completed = CompleteUser(found, request);
 
         // Update user
-        DatabaseModuleMain.users.Update("_id", request.Id, completed);
+        DatabaseCore.users.Update("_id", request.Id, completed);
 
         UserInfo response = CreateUserInfoResponse(completed, true);
 
@@ -39,17 +39,17 @@ public class UserGuiService : UserService.UserServiceBase
 
     public override async Task<UserInfo> UpdateUserInfo(UpdateUserInfoRequest request, ServerCallContext context)
     {
-        Printer.BlueLn($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
+        Printer.LogRequest(request, context.Host, context.Method);
 
         // Find user
-        User found = await DatabaseModuleMain.users.Read("_id", request.Id);
+        User found = await DatabaseCore.users.ReadAsync("_id", request.Id);
         if (found == null) throw new RpcException(new Status(StatusCode.NotFound, "User with id: '" + request.Id + "' not found."));
 
         // Create updated user
         User updated = UpdateUser(found, request);
 
         // Update user
-        DatabaseModuleMain.users.Update("_id", request.Id, updated);
+        DatabaseCore.users.Update("_id", request.Id, updated);
 
         UserInfo response = CreateUserInfoResponse(updated, updated.CadastroCompleto);
 
@@ -60,10 +60,10 @@ public class UserGuiService : UserService.UserServiceBase
 
     public override async Task<UserInfo> GetUserInfo(UserIdRequest request, ServerCallContext context)
     {
-        Printer.BlueLn($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
+        Printer.LogRequest(request, context.Host, context.Method);
 
         // Find user
-        User found = await DatabaseModuleMain.users.Read("_id", request.Id);
+        User found = await DatabaseCore.users.ReadAsync("_id", request.Id);
         if (found == null) throw new RpcException(new Status(StatusCode.NotFound, "User with id: '" + request.Id + "' not found."));
 
         UserInfo response = CreateUserInfoResponse(found, found.CadastroCompleto);
@@ -75,19 +75,21 @@ public class UserGuiService : UserService.UserServiceBase
 
     public override async Task<Anos> GetAnosFromUser(UserIdRequest request, ServerCallContext context)
     {
-        Printer.BlueLn($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
+        Printer.LogRequest(request, context.Host, context.Method);
 
         // Find user
-        User found = await DatabaseModuleMain.users.Read("_id", request.Id);
+        User found = await DatabaseCore.users.ReadAsync("_id", request.Id);
         if (found == null) throw new RpcException(new Status(StatusCode.NotFound, "User with id: '" + request.Id + "' not found."));
     
         // Find all PITs
-        List<int> pits = DatabaseModuleMain.pits.ReadDistinct("ano");
+        List<PIT> pits = DatabaseCore.pits.ReadMany("user_id",request.Id);
+        List<int> pitAnos = pits.Select(x => x.Ano).Distinct().ToList();
 
         // Find all RITs
-        List<int> rits = DatabaseModuleMain.rits.ReadDistinct("ano");
+        List<RIT> rits = DatabaseCore.rits.ReadMany("user_id",request.Id);
+        List<int> ritAnos = pits.Select(x => x.Ano).Distinct().ToList();
 
-        Anos response = CreateAnosResponse(pits, rits);
+        Anos response = CreateAnosResponse(pitAnos, ritAnos);
 
         Console.WriteLine("Response sent: " + response);
 

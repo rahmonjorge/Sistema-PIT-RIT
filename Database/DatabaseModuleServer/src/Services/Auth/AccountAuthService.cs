@@ -3,6 +3,7 @@ namespace Database.Auth.Services;
 using HTools;
 using Grpc.Core;
 using DatabaseModule.Entities;
+using DatabaseModule.Controllers;
 using Database.Auth;
 
 public class AccountService : AccountAuthService.AccountAuthServiceBase
@@ -16,12 +17,12 @@ public class AccountService : AccountAuthService.AccountAuthServiceBase
 
     public override Task<AdapterAccount> LinkAccount(AdapterAccount request, ServerCallContext context)
     {
-        Printer.BlueLn($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
+        Printer.LogRequest(request, context.Host, context.Method);
 
         Account account = CreateAccount(request);
 
         // Adding new account to the database
-        DatabaseModuleMain.accounts.Create(account);
+        DatabaseCore.accounts.Create(account);
 
         AdapterAccount response = CreateAdapterAccount(account);
 
@@ -32,13 +33,13 @@ public class AccountService : AccountAuthService.AccountAuthServiceBase
 
     public override async Task<AdapterAccount> UnlinkAccount(UnlinkAccountRequest request, ServerCallContext context)
     {
-        Printer.BlueLn($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
+        Printer.LogRequest(request, context.Host, context.Method);
         
         // Finding account
-        Account account = await DatabaseModuleMain.accounts.Read("provider", request.Provider, "provider_id", request.ProviderAccountId);
+        Account account = await DatabaseCore.accounts.ReadAsync("provider", request.Provider, "provider_id", request.ProviderAccountId);
 
         // Removing requested account from database
-        DatabaseModuleMain.accounts.Delete("provider", request.Provider, "provider_id", request.ProviderAccountId);
+        DatabaseCore.accounts.Delete("provider", request.Provider, "provider_id", request.ProviderAccountId);
 
         AdapterAccount response = CreateAdapterAccount(account);
 

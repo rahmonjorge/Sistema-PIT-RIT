@@ -4,28 +4,9 @@ using MongoDB.Bson;
 
 namespace DatabaseModule.Controllers;
 
-// TODO: CHANGE TO SINGLETON!!
-// TODO: ADD INTERFACE WITH DYNAMIC TYPES FOR CRUD
-public class RitsController
+public class RitsController : Controller<RIT>
 {
-    private readonly string collectionName = "rits";
-    private IMongoCollection<RIT> _collection;
-
-    public RitsController()
-    {
-        _collection = DatabaseModuleMain._database.GetCollection<RIT>(collectionName);  
-    }
-
-    public RIT Read(string key, string value)
-    {
-        FilterDefinition<RIT> filter;
-        if (key == "_id")
-            filter = Builders<RIT>.Filter.Eq(key, ObjectId.Parse(value));
-        else
-            filter = Builders<RIT>.Filter.Eq(key, value);
-        
-        return _collection.Find(filter).FirstOrDefault();
-    }
+    public RitsController(IMongoCollection<RIT> collection) : base(collection) {}
 
     public List<int> ReadDistinct(string key)
     {

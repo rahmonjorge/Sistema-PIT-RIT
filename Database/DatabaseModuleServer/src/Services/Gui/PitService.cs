@@ -16,17 +16,19 @@ public class PitGuiService : PitService.PitServiceBase
         _logger = logger;
     }
 
-    
     public override async Task<Gui.Sheet> CreatePit(CreatePitRequest request, ServerCallContext context)
     {
-        Printer.BlueLn($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
+        Printer.LogRequest(request, context.Host, context.Method);
         
         // Check if pit already exists
-        var found = await DatabaseModuleMain.pits.Read("user_id", request.UserId, "ano", request.Ano);
+        var found = await DatabaseCore.pits.ReadAsync("user_id", request.UserId, "ano", request.Ano);
         if (found != null) throw new RpcException(new Status(StatusCode.AlreadyExists, $"PIT of year {request.Ano} already exists for user_id: {request.UserId}"));
 
         // Create empty PIT
         PIT pit = new PIT(request.UserId, request.Ano, new Sheet());
+
+        // Add to database
+        DatabaseCore.pits.Create(pit);
 
         Gui.Sheet response = CreateSheetResponse(pit.Planilha);
         
@@ -37,10 +39,10 @@ public class PitGuiService : PitService.PitServiceBase
 
     public override async Task<Gui.Sheet> GetPit(GetPitRequest request, ServerCallContext context)
     {
-        Printer.BlueLn($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
+        Printer.LogRequest(request, context.Host, context.Method);
         
         // Find pit
-        PIT found = await DatabaseModuleMain.pits.Read("user_id", request.UserId, "ano", request.Ano);
+        PIT found = await DatabaseCore.pits.ReadAsync("user_id", request.UserId, "ano", request.Ano);
         if (found == null) throw new RpcException(new Status(StatusCode.NotFound, $"PIT of year {request.Ano} for user_id: {request.UserId} not found."));
 
         Gui.Sheet response = CreateSheetResponse(found.Planilha);
@@ -52,19 +54,19 @@ public class PitGuiService : PitService.PitServiceBase
     
     public override async Task<Gui.Sheet> UpdatePit(UpdatePitRequest request, ServerCallContext context)
     {
-        Printer.BlueLn($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
+        Printer.LogRequest(request, context.Host, context.Method);
         
         // Find pit
-        PIT found = await DatabaseModuleMain.pits.Read("user_id", request.UserId, "ano", request.Ano);
+        PIT found = await DatabaseCore.pits.ReadAsync("user_id", request.UserId, "ano", request.Ano);
         if (found == null) throw new RpcException(new Status(StatusCode.NotFound, $"PIT of year {request.Ano} for user_id: {request.UserId} not found."));
 
         // Create replacement PIT
-        PIT replace = UpdatePit(found, request);
+        PIT replace = GetUpdatedPit(found, request);
 
         // Replace pit
-        DatabaseModuleMain.pits.Update("_id", found.Id.ToString(), replace);
+        DatabaseCore.pits.Update("_id", found.Id.ToString(), replace);
 
-        Gui.Sheet response = CreateSheetResponse(found.Planilha);
+        Gui.Sheet response = CreateSheetResponse(replace.Planilha);
         
         Console.WriteLine("Response sent: " + response);
 
@@ -89,11 +91,10 @@ public class PitGuiService : PitService.PitServiceBase
         };
     }
 
-    public PIT UpdatePit(PIT pit, UpdatePitRequest request)
+    public PIT GetUpdatedPit(PIT pit, UpdatePitRequest request)
     {
-        Gui.Sheet updated = request.Sheet;
-
-        return new PIT(pit.UserId, pit.Ano, FromSheetToSheet(updated));
+        pit.Planilha = FromSheetToSheet(request.Sheet);
+        return pit;
     }
 
     public Gui.Sheet CreateSheetResponse(Sheet sheet)

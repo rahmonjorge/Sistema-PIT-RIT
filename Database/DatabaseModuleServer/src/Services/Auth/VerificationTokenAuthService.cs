@@ -17,14 +17,14 @@ public class VerificationTokenService : VerificationTokenAuthService.Verificatio
 
     public override Task<VerificationTokenObj> CreateVerificationToken(VerificationTokenObj request, ServerCallContext context)
     {
-        Printer.BlueLn($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
+        Printer.LogRequest(request, context.Host, context.Method);
 
         VerificationToken newToken = new VerificationToken(request.Token)
         {
             Expires = request.Expires.ToDateTime()
         };
 
-        DatabaseModuleMain.tokens.Create(newToken);
+        DatabaseCore.tokens.Create(newToken);
 
         VerificationTokenObj response = CreateVerificationTokenObj(newToken);
 
@@ -35,7 +35,7 @@ public class VerificationTokenService : VerificationTokenAuthService.Verificatio
 
     public override Task<VerificationTokenObj> UseVerificationToken(UseVerificationTokenRequest request, ServerCallContext context)
     {
-        Printer.BlueLn($"Request received: '{request}' from host '{context.Host}' using method '{context.Method}'");
+        Printer.LogRequest(request, context.Host, context.Method);
         throw new RpcException(new Status(StatusCode.Unimplemented,$"{context.Method} unimplemented by server"));
     }
 
