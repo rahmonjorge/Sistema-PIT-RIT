@@ -37,7 +37,7 @@
 <svelte:component
 	this={PdfViewer}
 	class="w-11/12"
-	data={Buffer.from(data.pdf)}
+	data={atob(data.pdf)}
 	showButtons={['navigation', 'zoom', 'rotate', 'pageInfo']}
 	scale={1.8}
 />

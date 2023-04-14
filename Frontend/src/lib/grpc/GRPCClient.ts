@@ -6,13 +6,17 @@ import {
 	UserAuthServiceClient,
 	VerificationTokenAuthServiceClient
 } from '../protos/database.auth.client';
-import { UserServiceClient, PitServiceClient } from '../protos/database.gui.client';
+import {
+	UserServiceClient,
+	PitServiceClient,
+	RitServiceClient
+} from '../protos/database.gui.client';
 import { EmailServiceClient } from '../protos/mail.client';
-import { SheetsServiceClient } from '../protos/sheets.client';
+import { SheetsServiceClient } from '../protos/sheetsEditor.client';
 
 const dbTransport = new GrpcTransport({
-	// host: '26.52.183.15:6924',
-	host: 'localhost:5555',
+	host: '26.52.183.15:6924',
+	// host: 'localhost:5555',
 	channelCredentials: ChannelCredentials.createInsecure()
 });
 
@@ -30,6 +34,7 @@ const sheetsClient = new SheetsServiceClient(sheetsTransport);
 
 const mailClient = new EmailServiceClient(mailTransport);
 const pitClient = new PitServiceClient(dbTransport);
+const ritClient = new RitServiceClient(dbTransport);
 const userClient = new UserServiceClient(dbTransport);
 const userAuthClient = new UserAuthServiceClient(dbTransport);
 const sessionClient = new SessionAuthServiceClient(dbTransport);
@@ -46,7 +51,8 @@ export const GRPCClient = {
 		},
 		gui: {
 			user: userClient,
-			pit: pitClient
+			pit: pitClient,
+			rit: ritClient
 		}
 	},
 	mail: mailClient,

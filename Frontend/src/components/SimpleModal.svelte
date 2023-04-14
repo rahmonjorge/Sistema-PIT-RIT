@@ -42,7 +42,7 @@
 			class="m-auto flex max-w-[600px] flex-col items-center gap-8 rounded-lg bg-white px-12 py-8"
 		>
 			<DialogTitle class="text-5xl font-bold">{title}</DialogTitle>
-			<DialogDescription class="max-w-[300px]">
+			<DialogDescription>
 				{description}
 			</DialogDescription>
 			{#if oneButton}

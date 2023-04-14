@@ -247,6 +247,49 @@ export interface UpdatePitRequest {
      */
     sheet?: Sheet;
 }
+/**
+ * @generated from protobuf message database.gui.CreateRitRequest
+ */
+export interface CreateRitRequest {
+    /**
+     * @generated from protobuf field: string userId = 1;
+     */
+    userId: string;
+    /**
+     * @generated from protobuf field: int32 ano = 2;
+     */
+    ano: number;
+}
+/**
+ * @generated from protobuf message database.gui.GetRitRequest
+ */
+export interface GetRitRequest {
+    /**
+     * @generated from protobuf field: string userId = 1;
+     */
+    userId: string;
+    /**
+     * @generated from protobuf field: int32 ano = 2;
+     */
+    ano: number;
+}
+/**
+ * @generated from protobuf message database.gui.UpdateRitRequest
+ */
+export interface UpdateRitRequest {
+    /**
+     * @generated from protobuf field: string userId = 1;
+     */
+    userId: string;
+    /**
+     * @generated from protobuf field: int32 ano = 2;
+     */
+    ano: number;
+    /**
+     * @generated from protobuf field: database.gui.Sheet sheet = 3;
+     */
+    sheet?: Sheet;
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class UserIdRequest$Type extends MessageType<UserIdRequest> {
     constructor() {
@@ -1001,6 +1044,175 @@ class UpdatePitRequest$Type extends MessageType<UpdatePitRequest> {
  * @generated MessageType for protobuf message database.gui.UpdatePitRequest
  */
 export const UpdatePitRequest = new UpdatePitRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CreateRitRequest$Type extends MessageType<CreateRitRequest> {
+    constructor() {
+        super("database.gui.CreateRitRequest", [
+            { no: 1, name: "userId", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "ano", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<CreateRitRequest>): CreateRitRequest {
+        const message = { userId: "", ano: 0 };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<CreateRitRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateRitRequest): CreateRitRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string userId */ 1:
+                    message.userId = reader.string();
+                    break;
+                case /* int32 ano */ 2:
+                    message.ano = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CreateRitRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string userId = 1; */
+        if (message.userId !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.userId);
+        /* int32 ano = 2; */
+        if (message.ano !== 0)
+            writer.tag(2, WireType.Varint).int32(message.ano);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message database.gui.CreateRitRequest
+ */
+export const CreateRitRequest = new CreateRitRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetRitRequest$Type extends MessageType<GetRitRequest> {
+    constructor() {
+        super("database.gui.GetRitRequest", [
+            { no: 1, name: "userId", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "ano", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<GetRitRequest>): GetRitRequest {
+        const message = { userId: "", ano: 0 };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<GetRitRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetRitRequest): GetRitRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string userId */ 1:
+                    message.userId = reader.string();
+                    break;
+                case /* int32 ano */ 2:
+                    message.ano = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetRitRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string userId = 1; */
+        if (message.userId !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.userId);
+        /* int32 ano = 2; */
+        if (message.ano !== 0)
+            writer.tag(2, WireType.Varint).int32(message.ano);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message database.gui.GetRitRequest
+ */
+export const GetRitRequest = new GetRitRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdateRitRequest$Type extends MessageType<UpdateRitRequest> {
+    constructor() {
+        super("database.gui.UpdateRitRequest", [
+            { no: 1, name: "userId", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "ano", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "sheet", kind: "message", T: () => Sheet }
+        ]);
+    }
+    create(value?: PartialMessage<UpdateRitRequest>): UpdateRitRequest {
+        const message = { userId: "", ano: 0 };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<UpdateRitRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpdateRitRequest): UpdateRitRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string userId */ 1:
+                    message.userId = reader.string();
+                    break;
+                case /* int32 ano */ 2:
+                    message.ano = reader.int32();
+                    break;
+                case /* database.gui.Sheet sheet */ 3:
+                    message.sheet = Sheet.internalBinaryRead(reader, reader.uint32(), options, message.sheet);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UpdateRitRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string userId = 1; */
+        if (message.userId !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.userId);
+        /* int32 ano = 2; */
+        if (message.ano !== 0)
+            writer.tag(2, WireType.Varint).int32(message.ano);
+        /* database.gui.Sheet sheet = 3; */
+        if (message.sheet)
+            Sheet.internalBinaryWrite(message.sheet, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message database.gui.UpdateRitRequest
+ */
+export const UpdateRitRequest = new UpdateRitRequest$Type();
 /**
  * @generated ServiceType for protobuf service database.gui.UserService
  */
@@ -1009,7 +1221,7 @@ export const UserService = new ServiceType("database.gui.UserService", [
     { name: "UpdateUserInfo", options: {}, I: UpdateUserInfoRequest, O: UserInfo },
     { name: "GetUserInfo", options: {}, I: UserIdRequest, O: UserInfo },
     { name: "GetAnosFromUser", options: {}, I: UserIdRequest, O: Anos }
-], { "ts.server": ["GRPC1_SERVER"] });
+]);
 /**
  * @generated ServiceType for protobuf service database.gui.PitService
  */
@@ -1017,4 +1229,12 @@ export const PitService = new ServiceType("database.gui.PitService", [
     { name: "CreatePit", options: {}, I: CreatePitRequest, O: Sheet },
     { name: "GetPit", options: {}, I: GetPitRequest, O: Sheet },
     { name: "UpdatePit", options: {}, I: UpdatePitRequest, O: Sheet }
-], { "ts.server": ["GRPC1_SERVER"] });
+]);
+/**
+ * @generated ServiceType for protobuf service database.gui.RitService
+ */
+export const RitService = new ServiceType("database.gui.RitService", [
+    { name: "CreateRit", options: {}, I: CreatePitRequest, O: Sheet },
+    { name: "GetRit", options: {}, I: GetRitRequest, O: Sheet },
+    { name: "UpdateRit", options: {}, I: UpdateRitRequest, O: Sheet }
+]);

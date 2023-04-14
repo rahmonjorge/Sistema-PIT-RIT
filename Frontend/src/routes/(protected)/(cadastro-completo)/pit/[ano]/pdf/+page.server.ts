@@ -2,10 +2,13 @@ import { GRPCClient } from '$/lib/grpc/GRPCClient';
 import { error, redirect } from '@sveltejs/kit';
 
 import type { PageServerLoad } from './$types';
+import { _validate } from '$/routes/(protected)/api/pit/validar/+server';
 
 export const load = (async ({ parent, params, fetch }) => {
 	const { session } = await parent();
 	const { ano } = params;
+
+	console.log('o meu deus');
 
 	if (!session) {
 		throw error(401, 'Não autorizado');
@@ -13,18 +16,20 @@ export const load = (async ({ parent, params, fetch }) => {
 
 	const { user } = session;
 
-	const isValid = await fetch('http://localhost:5173/api/validar', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({
-			userId: user?.id,
-			ano: Number(ano)
-		})
+	if (!user) {
+		throw error(401, 'Não autorizado');
+	}
+
+	const userInfo = await GRPCClient.database.gui.user.getUserInfo({
+		id: user.id
 	});
 
-	if (!isValid.ok) {
+	const pitSheet = await GRPCClient.database.gui.pit.getPit({
+		ano: Number(ano),
+		userId: user.id
+	});
+
+	if (!_validate(pitSheet.response, userInfo.response).valid) {
 		throw redirect(302, '/');
 	}
 

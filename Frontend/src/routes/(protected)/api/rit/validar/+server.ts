@@ -86,7 +86,7 @@ export const POST = (async ({ request }) => {
 
 	try {
 		const parsedBody = isValidRequestSchema.parse(body);
-		const resPit = await GRPCClient.database.gui.pit.getPit({
+		const resRit = await GRPCClient.database.gui.rit.getRit({
 			ano: Number(parsedBody.ano),
 			userId: parsedBody.userId
 		});
@@ -95,10 +95,10 @@ export const POST = (async ({ request }) => {
 			id: parsedBody.userId
 		});
 
-		const pit = resPit.response;
+		const rit = resRit.response;
 		const user = resUser.response;
 
-		return new Response(JSON.stringify(_validate(pit, user)));
+		return new Response(JSON.stringify(_validate(rit, user)));
 	} catch (e) {
 		if (e instanceof z.ZodError) {
 			throw error(400, e.message);

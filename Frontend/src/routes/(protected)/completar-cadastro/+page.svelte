@@ -4,7 +4,6 @@
 	import type { ActionData, PageData } from './$types';
 	import Select from '$/components/Select.svelte';
 	import { superForm } from 'sveltekit-superforms/client';
-	import SuperDebug from 'sveltekit-superforms/client/SuperDebug.svelte';
 	import { onMount } from 'svelte';
 	import Input from '$/components/Input.svelte';
 	import { goto } from '$app/navigation';
