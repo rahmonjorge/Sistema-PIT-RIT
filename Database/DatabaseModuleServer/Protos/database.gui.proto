@@ -1,0 +1,116 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package database.gui;
+
+service UserService {
+    rpc CompletarCadastro (CompletarCadastroRequest) returns (UserInfo) {}
+    rpc UpdateUserInfo (UpdateUserInfoRequest) returns (UserInfo) {}
+    rpc GetUserInfo (UserIdRequest) returns (UserInfo) {}
+    rpc GetAnosFromUser (UserIdRequest) returns (Anos) {}
+}
+
+message UserIdRequest {
+    string id = 1;
+}
+
+message CompletarCadastroRequest {
+    string id = 1;
+    string name = 2;
+    string siape = 3;
+    string dpto = 4;
+    string vinculo = 5;
+    string regime = 6;
+    string reducao = 7;
+}
+
+message UserInfo {
+    string id = 1;
+    string email = 2;
+    bool cadastroCompleto = 3;
+    optional google.protobuf.Timestamp emailVerified = 4;
+    optional string name = 5;
+    optional string image = 6;
+    optional string siape = 7;
+    optional string dpto = 8;
+    optional string vinculo = 9;
+    optional string regime = 10;
+    optional string reducao = 11;
+}
+
+message UpdateUserInfoRequest {
+    string id = 1;
+    optional string name = 2;
+    optional string siape = 3;
+    optional string dpto = 4;
+    optional string vinculo = 5;
+    optional string regime = 6;
+    optional string reducao = 7;
+}
+
+message Ano {
+    int32 ano = 1;
+    bool rit = 2;
+}
+
+message Anos {
+    repeated Ano anos = 1;
+}
+
+service PitService {
+    rpc CreatePit (CreatePitRequest) returns (Sheet) {}
+    rpc GetPit (GetPitRequest) returns (Sheet) {}
+    rpc UpdatePit (UpdatePitRequest) returns (Sheet) {}
+}
+
+message Sheet {
+    float ch_grad = 2;
+    float ch_pos = 3;
+    repeated bool ensino = 4;
+    float ch_ensino = 5;
+    repeated bool pesquisa = 6;
+    float ch_pesquisa = 7;
+    repeated bool extensao = 8;
+    float ch_extensao = 9;
+    repeated bool adm = 10;
+    float ch_adm = 11;
+}
+
+message CreatePitRequest {
+    string userId = 1;
+    int32 ano = 2;
+}
+
+message GetPitRequest {
+    string userId = 1;
+    int32 ano = 2;
+}
+
+message UpdatePitRequest {
+    string userId = 1;
+    int32 ano = 2;
+    Sheet sheet = 3;
+}
+
+service RitService {
+    rpc CreateRit (CreateRitRequest) returns (Sheet) {}
+    rpc GetRit (GetRitRequest) returns (Sheet) {}
+    rpc UpdateRit (UpdateRitRequest) returns (Sheet) {}
+}
+
+message CreateRitRequest {
+    string userId = 1;
+    int32 ano = 2;
+}
+
+message GetRitRequest {
+    string userId = 1;
+    int32 ano = 2;
+}
+
+message UpdateRitRequest {
+    string userId = 1;
+    int32 ano = 2;
+    Sheet sheet = 3;
+}

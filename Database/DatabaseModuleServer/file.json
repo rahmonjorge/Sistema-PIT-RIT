@@ -1,0 +1,101 @@
+{
+    "_id": {
+        "$oid": "6432d7dd9be19d60d478688f"
+    },
+    "user_id": "641f3e1adce65c4ec0b00266",
+    "ano": {
+        "$numberLong": "2019"
+    },
+    "planilha": {
+        "ch_grad": {
+            "$numberDecimal": "7"
+        },
+        "ch_pos": {
+            "$numberDecimal": "7"
+        },
+        "ensino": [
+            false,
+            true,
+            false,
+            true,
+            false,
+            false,
+            true,
+            true,
+            false,
+            true,
+            false,
+            true,
+            true,
+            false,
+            true,
+            true
+        ],
+        "pesquisa": [
+            false,
+            true,
+            false,
+            true,
+            false,
+            false,
+            true,
+            true,
+            false,
+            true,
+            false,
+            true,
+            true,
+            false,
+            true,
+            true
+        ],
+        "extensao": [
+            false,
+            true,
+            false,
+            true,
+            false,
+            false,
+            true,
+            true,
+            false,
+            true,
+            false,
+            true,
+            true,
+            false,
+            true,
+            true
+        ],
+        "adm": [
+            false,
+            true,
+            false,
+            true,
+            false,
+            false,
+            true,
+            true,
+            false,
+            true,
+            false,
+            true,
+            true,
+            false,
+            true,
+            true
+        ],
+        "ch_adm": {
+            "$numberDecimal": "7"
+        },
+        "ch_ensino": {
+            "$numberDecimal": "7"
+        },
+        "ch_extensao": {
+            "$numberDecimal": "7"
+        },
+        "ch_pesquisa": {
+            "$numberDecimal": "7"
+        }
+    }
+}
