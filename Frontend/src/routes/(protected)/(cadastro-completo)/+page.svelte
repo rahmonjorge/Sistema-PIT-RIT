@@ -12,7 +12,9 @@
 </script>
 
 <div class="grid grid-cols-2 gap-4 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-	<CriarAnoPopup bind:isOpen />
+	{#if data.session?.user}
+		<CriarAnoPopup bind:isOpen userId={data.session?.user?.id} />
+	{/if}
 	{#if anos}
 		{#if anos.length === 0}
 			<div class="flex flex-col gap-4">

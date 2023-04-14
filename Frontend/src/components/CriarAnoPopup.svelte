@@ -4,6 +4,7 @@
 	import { Dialog, DialogOverlay, DialogTitle } from '@rgossiaux/svelte-headlessui';
 	import Input from './Input.svelte';
 	export let isOpen: boolean;
+	export let userId: string;
 	const anoPattern = '[0-9]{4}';
 
 	let validationError = {
@@ -39,7 +40,7 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ ano: formData.get('ano'), userId: $page.data.session?.user?.id })
+				body: JSON.stringify({ ano: formData.get('ano'), userId: userId })
 			});
 
 			if (response.ok) {

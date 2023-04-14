@@ -15,7 +15,7 @@ import { EmailServiceClient } from '../protos/mail.client';
 import { SheetsServiceClient } from '../protos/sheetsEditor.client';
 
 const dbTransport = new GrpcTransport({
-	host: '26.52.183.15:6924',
+	host: '26.145.102.198:6924',
 	// host: 'localhost:5555',
 	channelCredentials: ChannelCredentials.createInsecure()
 });
