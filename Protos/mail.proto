@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package sheets;
+
+service EmailService {
+    rpc SendEmail (EmailMessage) returns (Result) {}
+}
+
+enum Type {
+    bug = 0;
+    feature = 1;
+    question = 2;
+}
+
+message EmailMessage {
+    optional string from = 1;
+    optional string name = 2;
+    Type type = 3;
+    string message = 4;
+}
+
+message Result {
+    bool success = 1;
+    string message = 2;
+}
