@@ -5,8 +5,6 @@ import "protobuf-ts.proto";
 
 package database.auth;
 
-
-
 service UserAuthService {
     rpc CreateUser (CreateUserRequest) returns (BasicUserResponse) {}
     rpc GetUser (GetUserRequest) returns (BasicUserResponse) {}
