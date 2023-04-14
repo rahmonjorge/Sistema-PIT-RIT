@@ -5,6 +5,7 @@ import type { CustomAdapter } from '$lib/prisma/client';
 declare module '@auth/core/types' {
 	interface Session extends OGSession {
 		user?: {
+			id: string;
 			cadastroCompleto: boolean;
 		} & DefaultSession['user'];
 	}

@@ -7,6 +7,7 @@ import { GRPCClient } from '$/lib/grpc/GRPCClient';
 
 export const handle = (async (...args) => {
 	const [{ event }] = args;
+
 	return SvelteKitAuth({
 		adapter: GRPCAdapter(GRPCClient),
 		providers: [
@@ -20,6 +21,7 @@ export const handle = (async (...args) => {
 		callbacks: {
 			async session({ session, user }) {
 				session.user = {
+					id: user.id,
 					name: user.name,
 					email: user.email,
 					image: user.image,

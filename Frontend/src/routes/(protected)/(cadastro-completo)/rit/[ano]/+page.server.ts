@@ -1,6 +1,7 @@
 import type { PageServerLoad } from './$types';
 
-export const load = (() => {
+export const load = (async ({ parent }) => {
+	await parent();
 	// TODO: Perguntar ao banco de dados se o usuário possui um PIT para esse ano, se sim, mostrar a planilha PIT, senão, mostrar o erro e um botão para voltar para página inicial
 
 	if (Math.random() > 0.5) {

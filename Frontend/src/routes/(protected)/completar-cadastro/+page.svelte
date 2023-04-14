@@ -1,129 +1,130 @@
 <script lang="ts">
-	import Input from '$/components/Input.svelte';
 	import { page } from '$app/stores';
+	import { signOut } from '@auth/sveltekit/client';
+	import type { ActionData, PageData } from './$types';
+	import Select from '$/components/Select.svelte';
+	import { superForm } from 'sveltekit-superforms/client';
+	import SuperDebug from 'sveltekit-superforms/client/SuperDebug.svelte';
+	import { onMount } from 'svelte';
+	import Input from '$/components/Input.svelte';
+	import { goto } from '$app/navigation';
 
-	const vinculos: { value: string; label: string }[] = [
-		{
-			value: '',
-			label: 'Escolha o tipo de vínculo'
-		},
-		{
-			value: '1',
-			label: 'Efetivo'
-		},
-		{
-			value: '2',
-			label: 'Substituto'
-		}
-	];
+	export let data: PageData;
+	export let actionData: ActionData;
 
-	const regimes: { value: string; label: string }[] = [
-		{
-			value: '',
-			label: 'Escolha o regime de trabalho'
-		},
-		{
-			value: '1',
-			label: '20h'
-		},
-		{
-			value: '2',
-			label: '40h com DE'
-		},
-		{
-			value: '2',
-			label: '40h sem DE'
-		}
-	];
+	const vinculos: string[] = ['Efetivo', 'Substituto'];
+	const regimes: string[] = ['20h', '40h com DE', '40h sem DE'];
+	const reducoes: string[] = ['Não', 'Sim (Art. 9º)', 'Sim (Art. 10º)'];
 
-	const reducoes: { value: string; label: string }[] = [
-		{
-			value: '1',
-			label: 'Não'
-		},
-		{
-			value: '2',
-			label: 'Sim (Art. 9º)'
-		},
-		{
-			value: '3',
-			label: 'Sim (Art. 10º)'
-		}
-	];
+	const { form, errors, enhance } = superForm(data.form);
+
+	onMount(() => {
+		$form.name = $page.data.session?.user?.name ?? '';
+	});
+
+	$: if (actionData?.success) {
+		goto('/');
+	}
 </script>
 
-<div class="h-full w-full bg-slate-800 py-10">
-	<a href="/">
-		<h1 class="text-center text-6xl font-bold text-white">Nome do Sistema</h1>
-	</a>
-	<form action="" class="mx-auto mt-10 flex max-w-3xl flex-col gap-5 rounded-2xl bg-white p-9 pt-6">
-		<h2 class="text-4xl font-bold">Complete o seu cadastro</h2>
-		<label for="nome" class="flex flex-col text-xl font-medium">
-			Nome completo
-			<Input
-				type="text"
-				name="nome"
-				id="nome"
-				value={$page.data.session?.user?.name}
-				required
-				placeholder="Digite o seu nome..."
-			/>
-		</label>
-		<label for="siape" class="flex flex-col text-xl font-medium">
-			Matrícula SIAPE
-			<Input type="text" name="siape" id="siape" required placeholder="0000000" />
-		</label>
-		<label for="dep" class="flex flex-col text-xl font-medium">
-			Departamento/Unidade Acadêmica
-			<Input
-				type="text"
-				name="dep"
-				id="dep"
-				required
-				placeholder="Digite o Departamento ou a Unidade acadêmica..."
-			/>
-		</label>
-		<label for="vinculo" class="flex flex-col text-xl font-medium">
-			Tipo de vínculo
-			<select
-				id="vinculo"
-				name="vinculo"
-				value=""
-				class="w-full rounded-lg border border-zinc-600 px-4 py-2 text-xl text-zinc-700 shadow-sm"
-			>
-				{#each vinculos as vinculo}
-					<option value={vinculo.value} disabled={vinculo.value === ''}>{vinculo.label}</option>
-				{/each}
-			</select>
-		</label>
-		<label for="regime" class="flex flex-col text-xl font-medium">
-			Regime de Trabalho
-			<select
-				id="regime"
-				name="regime"
-				value=""
-				class="w-full rounded-lg border border-zinc-600 px-4 py-2 text-xl text-zinc-700 shadow-sm"
-			>
-				{#each regimes as regime}
-					<option value={regime.value} disabled={regime.value === ''}>{regime.label}</option>
-				{/each}
-			</select>
-		</label>
-		<label for="reducao" class="flex flex-col text-xl font-medium">
-			Exerce Função com Redução de CH de Ensino
-			<select
-				id="reducao"
-				name="reducao"
-				value="1"
-				class="w-full rounded-lg border border-zinc-600 px-4 py-2 text-xl text-zinc-700 shadow-sm"
-			>
-				{#each reducoes as regime}
-					<option value={regime.value}>{regime.label}</option>
-				{/each}
-			</select>
-		</label>
-		<button class="w-full rounded-lg bg-slate-500 py-2 text-xl font-bold text-white shadow-sm"
+<h1 class="mt-24 text-center text-6xl font-bold">Sistema PIT-RIT</h1>
+<h2 class="mt-2 text-center text-xl">
+	Crie seus <span class="font-semibold">PIT's</span> e <span class="font-semibold">RIT's</span> de uma
+	forma simplificada
+</h2>
+
+<form
+	use:enhance
+	method="POST"
+	class="mx-auto mt-10 flex w-11/12 max-w-3xl flex-col items-center gap-5 rounded-2xl p-9 pt-6"
+>
+	<div class="flex w-full flex-col gap-2 ">
+		<Input
+			bind:value={$form.name}
+			label="Nome completo"
+			placeholder="Digite o seu nome..."
+			name="name"
+			required
+		/>
+
+		{#if $errors.name}
+			<span class="text-red-400">{$errors.name}</span>
+		{/if}
+	</div>
+
+	<div class="flex w-full flex-col gap-2 ">
+		<Input
+			label="Matrícula SIAPE"
+			placeholder="0000000"
+			name="siape"
+			bind:value={$form.siape}
+			required
+		/>
+		{#if $errors.siape}
+			<span class="text-red-400">{$errors.siape}</span>
+		{/if}
+	</div>
+	<div class="flex w-full flex-col gap-2 ">
+		<Input
+			label="Departamento/Unidade Acadêmica"
+			placeholder="Digite o Departamento ou a Unidade acadêmica..."
+			name="dpto"
+			bind:value={$form.dpto}
+			required
+		/>
+
+		{#if $errors.dpto}
+			<span class="text-red-400">{$errors.dpto}</span>
+		{/if}
+	</div>
+
+	<div class="flex w-full flex-col gap-2">
+		<Select
+			options={vinculos}
+			bind:selectedOption={$form.vinculo}
+			label="Tipo de vínculo"
+			placeholder="Selecione o tipo de vínculo"
+			name="vinculo"
+		/>
+		{#if $errors.vinculo}
+			<span class="text-red-400">{$errors.vinculo}</span>
+		{/if}
+	</div>
+	<div class="flex w-full flex-col gap-2">
+		<Select
+			options={regimes}
+			bind:selectedOption={$form.regime}
+			label="Regime de trabalho"
+			placeholder="Selecione o regime de trabalho"
+			name="regime"
+		/>
+		{#if $errors.regime}
+			<span class="text-red-400">{$errors.regime}</span>
+		{/if}
+	</div>
+	<div class="flex w-full flex-col gap-2">
+		<Select
+			options={reducoes}
+			bind:selectedOption={$form.reducao}
+			label="Exerce Função com Redução de CH de Ensino"
+			placeholder="Selecione a opção"
+			name="reducao"
+		/>
+		{#if $errors.reducao}
+			<span class="text-red-400">{$errors.reducao}</span>
+		{/if}
+	</div>
+	<div class="mt-7 flex w-full justify-between">
+		<button
+			type="button"
+			class="rounded-lg bg-red-400 px-12 py-5 text-2xl font-bold text-white shadow-sm transition-colors duration-300 ease-in-out hover:bg-red-500"
+			on:click|once={() => signOut()}>Cancelar</button
+		>
+
+		<button
+			type="submit"
+			class="rounded-lg bg-orange-500 px-12 py-5 text-2xl font-bold text-white shadow-sm transition-colors duration-300 ease-in-out hover:bg-orange-600"
 			>Continuar</button
 		>
-	</form>
-</div>
+	</div>
+</form>

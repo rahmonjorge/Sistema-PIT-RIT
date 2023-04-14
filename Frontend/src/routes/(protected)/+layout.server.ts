@@ -3,6 +3,7 @@ import type { LayoutServerLoad } from './$types';
 
 export const load = (async ({ parent, route }) => {
 	const { session } = await parent();
+
 	if (!session?.user) {
 		throw redirect(302, '/login');
 	}

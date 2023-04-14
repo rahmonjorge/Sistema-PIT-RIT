@@ -1,3 +1,5 @@
-<footer class="w-full bg-slate-900 py-4 text-center">
-	<p class="text-3xl text-white">&copy; DC UFRPE 2023</p>
+<footer
+	class="col-span-full row-span-1 flex w-full items-center justify-center bg-neutral-900 py-10 text-white"
+>
+	<p class="text-3xl">&copy; DC UFRPE 2023</p>
 </footer>

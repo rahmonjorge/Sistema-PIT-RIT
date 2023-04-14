@@ -2,7 +2,7 @@ import type { Adapter, AdapterAccount, AdapterUser } from '@auth/core/adapters';
 import type { ProviderType } from '@auth/core/providers';
 import type { GRPCClientType } from './GRPCClient';
 import { Timestamp } from '../protos/google/protobuf/timestamp';
-import { ProtoProviderType } from '../protos/database';
+import { ProtoProviderType } from '../protos/database.auth';
 
 function convertTimestampToDate(timestamp?: Timestamp) {
 	if (!timestamp) return null;
@@ -22,12 +22,11 @@ export interface CustomAdapter extends OGAdapter {
 export function GRPCAdapter(client: GRPCClientType): CustomAdapter {
 	return {
 		async createUser(data) {
-			const timestamp = Timestamp.fromDate(new Date());
-			const res = await client.user.createUser({
+			const res = await client.database.auth.user.createUser({
 				email: data.email,
-				name: data.name ?? '',
-				image: data.image ?? '',
-				emailVerified: timestamp
+				name: data.name || undefined,
+				image: data.image || undefined,
+				emailVerified: data.emailVerified ? Timestamp.fromDate(data.emailVerified) : undefined
 			});
 
 			const user = res.response;
@@ -43,97 +42,125 @@ export function GRPCAdapter(client: GRPCClientType): CustomAdapter {
 		},
 
 		async getUser(id) {
-			const res = await client.user.getUser({
-				id
-			});
+			try {
+				const res = await client.database.auth.user.getUser({
+					id
+				});
 
-			const user = res.response;
-			if (!user) return null;
+				const user = res.response;
 
-			return {
-				id: user.id,
-				email: user.email,
-				cadastroCompleto: user.cadastroCompleto,
-				emailVerified: convertTimestampToDate(user.emailVerified),
-				name: user.name,
-				image: user.image
-			};
+				return {
+					id: user.id,
+					email: user.email,
+					cadastroCompleto: user.cadastroCompleto,
+					emailVerified: convertTimestampToDate(user.emailVerified),
+					name: user.name,
+					image: user.image
+				};
+			} catch (error) {
+				console.log('Error during get user');
+				console.log(error);
+				return null;
+			}
 		},
 
 		async getUserByEmail(email) {
-			const res = await client.user.getUserByEmail({
-				email
-			});
-			const user = res.response;
-			if (!user) return null;
+			try {
+				const res = await client.database.auth.user.getUserByEmail({
+					email
+				});
 
-			return {
-				id: user.id,
-				email: user.email,
-				cadastroCompleto: user.cadastroCompleto,
-				emailVerified: convertTimestampToDate(user.emailVerified),
-				name: user.name,
-				image: user.image
-			};
+				const user = res.response;
+				if (!user) return null;
+
+				return {
+					id: user.id,
+					email: user.email,
+					cadastroCompleto: user.cadastroCompleto,
+					emailVerified: convertTimestampToDate(user.emailVerified),
+					name: user.name,
+					image: user.image
+				};
+			} catch (error) {
+				console.log('Error during get user by email');
+				console.log(error);
+				return null;
+			}
 		},
 
 		async getUserByAccount({ provider, providerAccountId }) {
-			const res = await client.user.getUserByAccount({
-				provider,
-				providerAccountId
-			});
+			try {
+				const res = await client.database.auth.user.getUserByAccount({
+					provider,
+					providerAccountId
+				});
 
-			const user = res.response;
-			if (!user) return null;
+				const user = res.response;
+				if (!user) return null;
 
-			return {
-				id: user.id,
-				email: user.email,
-				cadastroCompleto: user.cadastroCompleto,
-				emailVerified: convertTimestampToDate(user.emailVerified),
-				name: user.name,
-				image: user.image
-			};
+				return {
+					id: user.id,
+					email: user.email,
+					cadastroCompleto: user.cadastroCompleto,
+					emailVerified: convertTimestampToDate(user.emailVerified),
+					name: user.name,
+					image: user.image
+				};
+			} catch (error) {
+				console.log('Error during get user by account');
+				console.log(error);
+				return null;
+			}
 		},
 
 		async updateUser({ id, ...data }) {
-			const res = await client.user.updateUser({
-				id,
-				email: data.email,
-				emailVerified: data.emailVerified ? Timestamp.fromDate(data.emailVerified) : undefined,
-				name: data.name ?? '',
-				image: data.image ?? ''
-			});
+			try {
+				const res = await client.database.auth.user.updateUser({
+					id,
+					email: data.email,
+					emailVerified: data.emailVerified ? Timestamp.fromDate(data.emailVerified) : undefined,
+					name: data.name ?? '',
+					image: data.image ?? ''
+				});
 
-			const user = res.response;
-			if (!user) return null;
+				const user = res.response;
 
-			return {
-				id: user.id,
-				email: user.email,
-				cadastroCompleto: user.cadastroCompleto,
-				emailVerified: convertTimestampToDate(user.emailVerified),
-				name: user.name,
-				image: user.image
-			};
+				return {
+					id: user.id,
+					email: user.email,
+					cadastroCompleto: user.cadastroCompleto,
+					emailVerified: convertTimestampToDate(user.emailVerified),
+					name: user.name,
+					image: user.image
+				};
+			} catch (error) {
+				console.log('Error during update user');
+				console.log(error);
+				return null;
+			}
 		},
 
 		async deleteUser(id) {
-			const res = await client.user.deleteUser({
-				id
-			});
+			try {
+				const res = await client.database.auth.user.deleteUser({
+					id
+				});
 
-			const deletedUser = res.response;
-			if (!deletedUser) return null;
+				const deletedUser = res.response;
 
-			return {
-				id: deletedUser.id,
-				email: deletedUser.email,
-				cadastroCompleto: deletedUser.cadastroCompleto,
-				emailVerified: convertTimestampToDate(deletedUser.emailVerified),
-				name: deletedUser.name,
-				image: deletedUser.image
-			};
+				return {
+					id: deletedUser.id,
+					email: deletedUser.email,
+					cadastroCompleto: deletedUser.cadastroCompleto,
+					emailVerified: convertTimestampToDate(deletedUser.emailVerified),
+					name: deletedUser.name,
+					image: deletedUser.image
+				};
+			} catch (error) {
+				console.log('Error during delete user');
+				console.log(error);
+				return null;
+			}
 		},
 
 		async linkAccount(data) {
@@ -155,7 +182,7 @@ export function GRPCAdapter(client: GRPCClientType): CustomAdapter {
 					break;
 			}
 
-			const res = await client.account.linkAccount({
+			const res = await client.database.auth.account.linkAccount({
 				userId: data.userId,
 				type: providerType,
 				provider: data.provider,
@@ -206,76 +233,88 @@ export function GRPCAdapter(client: GRPCClientType): CustomAdapter {
 		},
 
 		async unlinkAccount({ provider, providerAccountId }) {
-			const res = await client.account.unlinkAccount({
-				provider,
-				providerAccountId
-			});
+			try {
+				const res = await client.database.auth.account.unlinkAccount({
+					provider,
+					providerAccountId
+				});
 
-			const account = res.response;
-			if (!account) return;
+				const account = res.response;
 
-			let resultProviderType: ProviderType = 'oauth';
-			switch (account.type) {
-				case ProtoProviderType.credentials:
-					resultProviderType = 'credentials';
-					break;
-				case ProtoProviderType.email:
-					resultProviderType = 'email';
-					break;
-				case ProtoProviderType.oauth:
-					resultProviderType = 'oauth';
-					break;
-				case ProtoProviderType.oidc:
-					resultProviderType = 'oidc';
-					break;
-				default:
-					break;
+				let resultProviderType: ProviderType = 'oauth';
+				switch (account.type) {
+					case ProtoProviderType.credentials:
+						resultProviderType = 'credentials';
+						break;
+					case ProtoProviderType.email:
+						resultProviderType = 'email';
+						break;
+					case ProtoProviderType.oauth:
+						resultProviderType = 'oauth';
+						break;
+					case ProtoProviderType.oidc:
+						resultProviderType = 'oidc';
+						break;
+					default:
+						break;
+				}
+
+				return {
+					userId: account.userId,
+					type: resultProviderType,
+					provider: account.provider,
+					providerAccountId: account.providerAccountId,
+					refreshToken: account.refreshToken,
+					accessToken: account.accessToken,
+					expiresIn: account.expiresIn,
+					tokenType: account.tokenType,
+					scope: account.scope,
+					idToken: account.idToken,
+					sessionState: account.sessionState
+				};
+			} catch (error) {
+				console.log('Error during unlink account');
+				console.log(error);
+				return undefined;
 			}
-
-			return {
-				userId: account.userId,
-				type: resultProviderType,
-				provider: account.provider,
-				providerAccountId: account.providerAccountId,
-				refreshToken: account.refreshToken,
-				accessToken: account.accessToken,
-				expiresIn: account.expiresIn,
-				tokenType: account.tokenType,
-				scope: account.scope,
-				idToken: account.idToken,
-				sessionState: account.sessionState
-			};
 		},
 
 		async getSessionAndUser(sessionToken) {
-			const res = await client.session.getSessionAndUser({
-				sessionToken
-			});
+			try {
+				const res = await client.database.auth.session.getSessionAndUser({
+					sessionToken
+				});
 
-			const userAndSession = res.response;
-			const { user, session } = userAndSession;
-			if (!user || !session) return null;
+				const userAndSession = res.response;
 
-			return {
-				user: {
-					id: user.id,
-					email: user.email,
-					cadastroCompleto: user.cadastroCompleto,
-					emailVerified: convertTimestampToDate(user.emailVerified),
-					name: user.name,
-					image: user.image
-				},
-				session: {
-					userId: session.userId,
-					sessionToken: session.sessionToken,
-					expires: convertTimestampToDate(session.expires) as Date
-				}
-			};
+				const { user, session } = userAndSession;
+				if (!user || !session) return null;
+
+				return {
+					user: {
+						id: user.id,
+						email: user.email,
+						cadastroCompleto: user.cadastroCompleto,
+						emailVerified: convertTimestampToDate(user.emailVerified),
+						name: user.name,
+						image: user.image
+					},
+					session: {
+						userId: session.userId,
+						sessionToken: session.sessionToken,
+						expires: convertTimestampToDate(session.expires) as Date
+					}
+				};
+			} catch (error) {
+				console.log('Error during get session and user');
+				console.log(error);
+				return null;
+			}
 		},
 		async createSession(data) {
 			const expires = Timestamp.fromDate(data.expires);
 
-			const res = await client.session.createSession({
+			const res = await client.database.auth.session.createSession({
 				userId: data.userId,
 				sessionToken: data.sessionToken,
 				expires
@@ -291,48 +330,58 @@ export function GRPCAdapter(client: GRPCClientType): CustomAdapter {
 		},
 
 		async updateSession(data) {
-			let res;
+			try {
+				let res;
 
-			if (data.expires) {
-				res = await client.session.updateSession({
-					userId: data.userId,
-					sessionToken: data.sessionToken,
-					expires: Timestamp.fromDate(data.expires)
-				});
-			} else {
-				res = await client.session.updateSession({
-					userId: data.userId,
-					sessionToken: data.sessionToken
-				});
+				if (data.expires) {
+					res = await client.database.auth.session.updateSession({
+						userId: data.userId,
+						sessionToken: data.sessionToken,
+						expires: Timestamp.fromDate(data.expires)
+					});
+				} else {
+					res = await client.database.auth.session.updateSession({
+						userId: data.userId,
+						sessionToken: data.sessionToken
+					});
+				}
+
+				const session = res.response;
+
+				return {
+					userId: session.userId,
+					sessionToken: session.sessionToken,
+					expires: convertTimestampToDate(session.expires) as Date
+				};
+			} catch (error) {
+				console.log('Error during update session');
+				console.log(error);
+				return null;
 			}
-
-			const session = res.response;
-			if (!session) return null;
-
-			return {
-				userId: session.userId,
-				sessionToken: session.sessionToken,
-				expires: convertTimestampToDate(session.expires) as Date
-			};
 		},
 
 		async deleteSession(sessionToken) {
-			const res = await client.session.deleteSession({
-				sessionToken
-			});
+			try {
+				const res = await client.database.auth.session.deleteSession({
+					sessionToken
+				});
 
-			const deletedSession = res.response;
-			if (!deletedSession) return null;
+				const deletedSession = res.response;
 
-			return {
-				userId: deletedSession.userId,
-				sessionToken: deletedSession.sessionToken,
-				expires: convertTimestampToDate(deletedSession.expires) as Date
-			};
+				return {
+					userId: deletedSession.userId,
+					sessionToken: deletedSession.sessionToken,
+					expires: convertTimestampToDate(deletedSession.expires) as Date
+				};
+			} catch (error) {
+				console.log('Error during delete session');
+				console.log(error);
+				return null;
+			}
 		},
 
 		async createVerificationToken(data) {
-			const res = await client.verificationToken.createVerificationToken({
+			const res = await client.database.auth.verificationToken.createVerificationToken({
 				identifier: data.identifier,
 				token: data.token,
 				expires: Timestamp.fromDate(data.expires)
@@ -350,7 +399,7 @@ export function GRPCAdapter(client: GRPCClientType): CustomAdapter {
 		},
 
 		async useVerificationToken({ identifier, token }) {
-			const res = await client.verificationToken.useVerificationToken({
+			const res = await client.database.auth.verificationToken.useVerificationToken({
 				identifier,
 				token
 			});
