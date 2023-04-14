@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12sheetsEditor.proto\x12\x06sheets\"/\n\x10GetPitPDFRequest\x12\x0e\n\x06userId\x18\x01 \x01(\t\x12\x0b\n\x03\x61no\x18\x02 \x01(\x05\")\n\x08PitAsPDF\x12\x10\n\x08\x66ileName\x18\x01 \x01(\t\x12\x0b\n\x03pdf\x18\x02 \x01(\x0c\x32J\n\rSheetsService\x12\x39\n\tGetPitPDF\x12\x18.sheets.GetPitPDFRequest\x1a\x10.sheets.PitAsPDF\"\x00\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12sheetsEditor.proto\x12\x06sheets\"/\n\x10GetPitPDFRequest\x12\x0e\n\x06userId\x18\x01 \x01(\t\x12\x0b\n\x03\x61no\x18\x02 \x01(\x05\")\n\x08PitAsPDF\x12\x10\n\x08\x66ileName\x18\x01 \x01(\t\x12\x0b\n\x03pdf\x18\x02 \x01(\x0c\"/\n\x10GetRitPDFRequest\x12\x0e\n\x06userId\x18\x01 \x01(\t\x12\x0b\n\x03\x61no\x18\x02 \x01(\x05\")\n\x08RitAsPDF\x12\x10\n\x08\x66ileName\x18\x01 \x01(\t\x12\x0b\n\x03pdf\x18\x02 \x01(\x0c\x32\x85\x01\n\rSheetsService\x12\x39\n\tGetPitPDF\x12\x18.sheets.GetPitPDFRequest\x1a\x10.sheets.PitAsPDF\"\x00\x12\x39\n\tGetRitPDF\x12\x18.sheets.GetRitPDFRequest\x1a\x10.sheets.RitAsPDF\"\x00\x62\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'sheetsEditor_pb2', globals())
@@ -24,6 +24,10 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _GETPITPDFREQUEST._serialized_end=77
   _PITASPDF._serialized_start=79
   _PITASPDF._serialized_end=120
-  _SHEETSSERVICE._serialized_start=122
-  _SHEETSSERVICE._serialized_end=196
+  _GETRITPDFREQUEST._serialized_start=122
+  _GETRITPDFREQUEST._serialized_end=169
+  _RITASPDF._serialized_start=171
+  _RITASPDF._serialized_end=212
+  _SHEETSSERVICE._serialized_start=215
+  _SHEETSSERVICE._serialized_end=348
 # @@protoc_insertion_point(module_scope)

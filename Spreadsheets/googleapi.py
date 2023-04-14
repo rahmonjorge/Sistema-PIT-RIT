@@ -11,7 +11,8 @@ SCOPES = ['https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/a
 
 FOLDER_ID = '1Llwkw-E59cqfln2NCIz3bJgwWezFUVKe'
 # The ID of a sample document.
-PLANILHA_ID = '1e6kvNSLUHF1VfWg7Jvqmroc2zJi2J2vQHrcD0_oz128'
+PLANILHA_PIT_ID = '1e6kvNSLUHF1VfWg7Jvqmroc2zJi2J2vQHrcD0_oz128'
+PLANILHA_RIT_ID = '1gY85_cd_pWGiACzrrMbLnZcbqjzszRYPMW0nrSytf94'
 
 def export_as_pdf(drive_client, doc_id):
     """

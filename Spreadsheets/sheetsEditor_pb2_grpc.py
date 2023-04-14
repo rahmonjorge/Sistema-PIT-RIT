@@ -19,12 +19,23 @@ class SheetsServiceStub(object):
                 request_serializer=sheetsEditor__pb2.GetPitPDFRequest.SerializeToString,
                 response_deserializer=sheetsEditor__pb2.PitAsPDF.FromString,
                 )
+        self.GetRitPDF = channel.unary_unary(
+                '/sheets.SheetsService/GetRitPDF',
+                request_serializer=sheetsEditor__pb2.GetRitPDFRequest.SerializeToString,
+                response_deserializer=sheetsEditor__pb2.RitAsPDF.FromString,
+                )
 
 
 class SheetsServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def GetPitPDF(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetRitPDF(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -37,6 +48,11 @@ def add_SheetsServiceServicer_to_server(servicer, server):
                     servicer.GetPitPDF,
                     request_deserializer=sheetsEditor__pb2.GetPitPDFRequest.FromString,
                     response_serializer=sheetsEditor__pb2.PitAsPDF.SerializeToString,
+            ),
+            'GetRitPDF': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetRitPDF,
+                    request_deserializer=sheetsEditor__pb2.GetRitPDFRequest.FromString,
+                    response_serializer=sheetsEditor__pb2.RitAsPDF.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -62,5 +78,22 @@ class SheetsService(object):
         return grpc.experimental.unary_unary(request, target, '/sheets.SheetsService/GetPitPDF',
             sheetsEditor__pb2.GetPitPDFRequest.SerializeToString,
             sheetsEditor__pb2.PitAsPDF.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetRitPDF(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sheets.SheetsService/GetRitPDF',
+            sheetsEditor__pb2.GetRitPDFRequest.SerializeToString,
+            sheetsEditor__pb2.RitAsPDF.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
