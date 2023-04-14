@@ -4,6 +4,7 @@ package sheets;
 
 service SheetsService {
     rpc GetPitPDF (GetPitPDFRequest) returns (PitAsPDF) {}
+    rpc GetRitPDF (GetRitPDFRequest) returns (RitAsPDF) {}
 }
 
 message GetPitPDFRequest {
@@ -12,6 +13,16 @@ message GetPitPDFRequest {
 }
 
 message PitAsPDF {
+    string fileName =1;
+    bytes pdf = 2;
+}
+
+message GetRitPDFRequest {
+    string userId = 1;
+    int32 ano = 2;
+}
+
+message RitAsPDF {
     string fileName =1;
     bytes pdf = 2;
 }
