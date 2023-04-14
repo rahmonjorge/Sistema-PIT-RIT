@@ -11,14 +11,13 @@ Este projeto tem como objetivo desenvolver um sistema que auxilie os professores
 - Registro e edição de atividades de ensino, pesquisa, extensão e gestão
 - Geração de planilhas PIT em formato PDF
 - Geração de relatórios parciais e finais em formato PDF
-- Visualização do resultado da avaliação RIT
 
 ## Tecnologias
 
 - Linguagens de programação: C#, JavaScript, Python
 - Framework web: Sveltekit
 - Banco de dados: DjangoDB
-- Comunicação entre módulos: gRPC
+- Comunicação entre módulos: gRPC, protobuf
 
 ## Instalação
 
@@ -26,7 +25,7 @@ Este projeto tem como objetivo desenvolver um sistema que auxilie os professores
 
 ## Uso
 
-- Acesse o sistema pelo navegador: `http://localhost:8000/`
+- Acesse o sistema pelo site
 - Faça login com o google ou crie um novo usuário
 - Preencha os seus dados pessoais e acadêmicos
 - Registre as suas atividades de ensino, pesquisa, extensão e gestão
