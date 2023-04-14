@@ -4,7 +4,7 @@ import grpc, sheetsEditor_pb2_grpc, sheetsEditor_pb2, googleapi, random
 from database import sheets_pb2, sheets_pb2_grpc 
 
 
-channel = grpc.insecure_channel('26.52.183.15:6924')
+channel = grpc.insecure_channel('26.145.102.198:6924')
 stub = sheets_pb2_grpc.SpreadsheetServiceStub(channel)
 
 (DRIVE_CLIENT,SPREADSHEET_CLIENT) = googleapi.getClients()
