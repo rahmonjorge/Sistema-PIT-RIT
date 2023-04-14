@@ -1,9 +1,9 @@
 syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
+import "protobuf-ts.proto";
 
 package database.auth;
-
 
 service UserAuthService {
     rpc CreateUser (CreateUserRequest) returns (BasicUserResponse) {}
