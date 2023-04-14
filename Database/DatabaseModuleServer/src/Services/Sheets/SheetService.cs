@@ -44,7 +44,7 @@ public class SheetService : SpreadsheetService.SpreadsheetServiceBase
         if (request.Type.ToLower() == "pit")
         {
             // Find
-            PIT pitFound = DatabaseCore.pits.Read("user_id",request.UserId);
+            PIT pitFound = DatabaseCore.pits.Read("user_id", request.UserId, "ano", request.Ano); // TODO: BUSCAR NAO SÓ POR USUÁRIO MAS POR ANO TAMBÉM 
             if (pitFound == null) throw new RpcException(new Status(StatusCode.NotFound, "User with id: '" + request.UserId + "' not found."));
 
             // Send response
@@ -52,7 +52,7 @@ public class SheetService : SpreadsheetService.SpreadsheetServiceBase
         }
         else if (request.Type.ToLower() == "rit")
         {
-            RIT ritFound = DatabaseCore.rits.Read("user_id",request.UserId);
+            RIT ritFound = DatabaseCore.rits.Read("user_id",request.UserId, "ano", request.Ano);
             if (ritFound == null) throw new RpcException(new Status(StatusCode.NotFound, "User with id: '" + request.UserId + "' not found."));
 
             // Send response

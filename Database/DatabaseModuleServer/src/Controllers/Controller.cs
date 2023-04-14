@@ -25,32 +25,18 @@ public class Controller<T>
         return _collection.Find(filter).FirstOrDefault();
     }
 
-    public bool Update(string key, string value, T document)
-    {
-        FilterDefinition<T> filter;
-        if (key == "_id")
-            filter = Builders<T>.Filter.Eq(key, ObjectId.Parse(value));
-        else
-            filter = Builders<T>.Filter.Eq(key, value);
-        return _collection.ReplaceOne(filter, document).IsAcknowledged;
-    }
-
-    public bool Delete(string key, string value)
-    {
-        FilterDefinition<T> filter;
-        if (key == "_id")
-            filter = Builders<T>.Filter.Eq(key, ObjectId.Parse(value));
-        else
-            filter = Builders<T>.Filter.Eq(key, value);
-        return _collection.DeleteOne(filter).IsAcknowledged;
-    }
-
-    public DeleteResult Delete(string key1, string value1, string key2, string value2)
+    public T Read(string key1, string value1, string key2, int value2)
     {
         FilterDefinition<T> filter = 
             Builders<T>.Filter.Eq(key1, value1) &
             Builders<T>.Filter.Eq(key2, value2);
-        return _collection.DeleteOne(filter);
+        return _collection.Find(filter).FirstOrDefault();
+    }
+
+    public List<T> ReadAll()
+    {
+        FilterDefinition<T> filter = Builders<T>.Filter.Empty;
+        return _collection.Find(filter).ToList();
     }
 
     public async Task<T> ReadAsync(string key, string value)
@@ -91,4 +77,31 @@ public class Controller<T>
         return _collection.Find(filter).ToList();
     }
 
+    public bool Update(string key, string value, T document)
+    {
+        FilterDefinition<T> filter;
+        if (key == "_id")
+            filter = Builders<T>.Filter.Eq(key, ObjectId.Parse(value));
+        else
+            filter = Builders<T>.Filter.Eq(key, value);
+        return _collection.ReplaceOne(filter, document).IsAcknowledged;
+    }
+
+    public bool Delete(string key, string value)
+    {
+        FilterDefinition<T> filter;
+        if (key == "_id")
+            filter = Builders<T>.Filter.Eq(key, ObjectId.Parse(value));
+        else
+            filter = Builders<T>.Filter.Eq(key, value);
+        return _collection.DeleteOne(filter).IsAcknowledged;
+    }
+
+    public DeleteResult Delete(string key1, string value1, string key2, string value2)
+    {
+        FilterDefinition<T> filter = 
+            Builders<T>.Filter.Eq(key1, value1) &
+            Builders<T>.Filter.Eq(key2, value2);
+        return _collection.DeleteOne(filter);
+    }
 }

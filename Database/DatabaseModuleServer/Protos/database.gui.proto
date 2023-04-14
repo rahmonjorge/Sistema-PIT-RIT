@@ -92,3 +92,25 @@ message UpdatePitRequest {
     int32 ano = 2;
     Sheet sheet = 3;
 }
+
+service RitService {
+    rpc CreateRit (CreateRitRequest) returns (Sheet) {}
+    rpc GetRit (GetRitRequest) returns (Sheet) {}
+    rpc UpdateRit (UpdateRitRequest) returns (Sheet) {}
+}
+
+message CreateRitRequest {
+    string userId = 1;
+    int32 ano = 2;
+}
+
+message GetRitRequest {
+    string userId = 1;
+    int32 ano = 2;
+}
+
+message UpdateRitRequest {
+    string userId = 1;
+    int32 ano = 2;
+    Sheet sheet = 3;
+}

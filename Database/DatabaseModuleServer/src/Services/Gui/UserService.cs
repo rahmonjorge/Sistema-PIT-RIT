@@ -81,20 +81,19 @@ public class UserGuiService : UserService.UserServiceBase
         User found = await DatabaseCore.users.ReadAsync("_id", request.Id);
         if (found == null) throw new RpcException(new Status(StatusCode.NotFound, "User with id: '" + request.Id + "' not found."));
     
-        // Find all PITs
-        List<PIT> pits = DatabaseCore.pits.ReadMany("user_id",request.Id);
-        List<int> pitAnos = pits.Select(x => x.Ano).Distinct().ToList();
+        List<PIT> pits = DatabaseCore.pits.ReadMany("user_id", request.Id); // Find all PITs
+        List<RIT> rits = DatabaseCore.rits.ReadMany("user_id", request.Id); // Find all RITs    
 
-        // Find all RITs
-        List<RIT> rits = DatabaseCore.rits.ReadMany("user_id",request.Id);
-        List<int> ritAnos = pits.Select(x => x.Ano).Distinct().ToList();
+        List<Ano> anos = new List<Ano>();
 
-        Anos response = CreateAnosResponse(pitAnos, ritAnos);
+        // Loop na lista de pits. Adiciona um novo ano para cada pit e verifica se o ano possui um rit ao checar a lista de rits.
+        foreach (PIT pit in pits) if (pit != null) anos.Add(new Ano {Ano_ = pit.Ano, Rit = rits.Exists(r => r.Ano == pit.Ano)});
+
+        Anos response = CreateAnosResponse(anos);
 
         Console.WriteLine("Response sent: " + response);
 
         return response;
-
     }
 
     public User CompleteUser(User user, CompletarCadastroRequest request)
@@ -140,23 +139,10 @@ public class UserGuiService : UserService.UserServiceBase
         };
     }
 
-    public Anos CreateAnosResponse(List<int> pits, List<int> rits)
+    public Anos CreateAnosResponse(List<Ano> anos)
     {
-        
-        List<Ano> anos = new List<Ano>();
-
-        foreach (int ano in rits) 
-        {
-            anos.Add(new Ano {Ano_ = ano, Rit = true});
-            pits.Remove(ano);
-        }
-
-        if (pits.Count > 0) foreach (int ano in pits) anos.Add(new Ano {Ano_ = ano, Rit = false});
-
-        Anos response = new Anos();
-
+        var response = new Anos();
         foreach (Ano ano in anos) response.Anos_.Add(ano);
-
         return response;
     }
 }

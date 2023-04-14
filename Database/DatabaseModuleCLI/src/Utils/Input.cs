@@ -1,4 +1,4 @@
-namespace DatabaseModuleClient;
+namespace HTools;
 
 static class Input
 {
@@ -6,13 +6,13 @@ static class Input
 
     public static string[]? GetCommand(string prefix)
     {
-        string? input = GetUserInput();
+        string? input = GetUserInput(prefix);
         return input?.Split(' ');
     }
 
     public static string? GetUserInput(string prefix)
     {
-        Console.Write(prefix + " ");
+        Printer.Yellow(prefix + " ");
         string? input = Console.ReadLine();
         return input?.ToLower();
     }

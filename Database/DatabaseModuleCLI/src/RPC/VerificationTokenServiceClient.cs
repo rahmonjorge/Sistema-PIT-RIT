@@ -1,10 +1,10 @@
+namespace DatabaseModuleCLI;
+
 using Database.Auth;
 using Grpc.Net.Client;
 using Google.Protobuf.WellKnownTypes;
 
 using static Database.Auth.VerificationTokenAuthService;
-
-namespace DatabaseModuleClient;
 
 class VerificationTokenServiceClient
 {

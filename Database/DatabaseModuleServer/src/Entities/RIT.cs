@@ -24,4 +24,23 @@ public class RIT
         this.Ano = ano;
         this.Planilha = planilha;
     }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj == null || obj is not RIT) return false;
+
+        RIT rit = (RIT) obj;
+
+        return (rit.UserId == this.UserId && rit.Ano == this.Ano);
+    }
+
+    public override string ToString()
+    {
+        return $"_id: {Id}, user_id: {UserId}, ano: {Ano}";
+    }
+
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
+    }
 }

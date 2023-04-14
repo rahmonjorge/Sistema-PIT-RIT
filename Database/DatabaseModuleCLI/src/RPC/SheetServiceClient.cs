@@ -1,10 +1,9 @@
+namespace DatabaseModuleCLI;
+
 using Database.Sheets;
 using Grpc.Net.Client;
-using Google.Protobuf.WellKnownTypes;
 
 using static Database.Sheets.SpreadsheetService;
-
-namespace DatabaseModuleClient;
 
 class SheetServiceClient
 {

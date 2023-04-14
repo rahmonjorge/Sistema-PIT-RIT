@@ -1,10 +1,9 @@
+namespace DatabaseModuleCLI;
+
 using Database.Auth;
 using Grpc.Net.Client;
-using Google.Protobuf.WellKnownTypes;
 
 using static Database.Auth.AccountAuthService;
-
-namespace DatabaseModuleClient;
 
 class AccountServiceClient
 {

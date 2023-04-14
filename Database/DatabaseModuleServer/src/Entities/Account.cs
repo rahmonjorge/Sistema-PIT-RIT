@@ -13,7 +13,7 @@ public class Account
     public string UserId { get; set; }
 
     [BsonElement("provider_type")]
-    public ProtoProviderType Type { get; set; }
+    public ProtoProviderType ProviderType { get; set; }
 
     [BsonElement("provider")]
     public string Provider { get; set; }
@@ -45,8 +45,13 @@ public class Account
     public Account(string userId, string provider, string providerAccountId, ProtoProviderType type)
     {
         this.UserId = userId;
-        this.Type = type;
+        this.ProviderType = type;
         this.Provider = provider;
         this.ProviderAccountId = providerAccountId;
+    }
+
+    public override string ToString()
+    {
+        return $"user_id: {this.UserId}, provider_type: {this.ProviderType}, provider_id: {this.ProviderAccountId}";
     }
 }

@@ -16,4 +16,9 @@ public class VerificationToken
     {
         this.Token = token;
     }
+
+    public override string ToString()
+    {
+        return $"expires: {this.Expires}, token: {this.Token}";
+    }
 }

@@ -23,6 +23,6 @@ public class Session
 
     public override string ToString()
     {
-        return $"Token: {Token}, User Id: {UserId}, Expires: {Expires}";
+        return $"token: {this.Token}, user_id: {this.UserId}, expires: {this.Expires}";
     }
 }

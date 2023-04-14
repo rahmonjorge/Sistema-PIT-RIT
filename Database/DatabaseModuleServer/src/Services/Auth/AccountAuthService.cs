@@ -67,7 +67,7 @@ public class AccountService : AccountAuthService.AccountAuthServiceBase
         return new AdapterAccount()
         {
            UserId = account.UserId,
-           Type = account.Type,
+           Type = account.ProviderType,
            Provider = account.Provider,
            ProviderAccountId = account.ProviderAccountId,
            RefreshToken = account.RefreshToken,

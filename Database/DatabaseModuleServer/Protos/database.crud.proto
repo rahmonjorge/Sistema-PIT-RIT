@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package database.crud;
+
+service CRUDService {
+    rpc CRUDMethod (CRUDRequest) returns (CRUDResponse) {}
+    rpc ShowCollection (ShowCollectionRequest) returns (ShowCollectionResponse) {}
+}
+
+message CRUDRequest {
+    string collection = 1;
+    string operation = 2;
+}
+
+message CRUDResponse {
+    string data = 1;
+    optional string error = 2;
+}
+
+message ShowCollectionRequest {
+    string collection = 1;
+}
+
+message ShowCollectionResponse {
+    repeated string data = 1;
+    optional string error = 2;
+}
