@@ -54,9 +54,6 @@ def popularPlanilha(spreadsheetclient, ano, user, sheet, fileId):
     adm = list(sheet.adm)
     adm.append(sheet.ch_adm)
 
-    print(sheet.ch_grad) 
-    print(sheet.ch_pos)
-
     body = {
         "valueInputOption": "USER_ENTERED",
         "data": [{
