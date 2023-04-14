@@ -1,11 +1,13 @@
 syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
+import "protobuf-ts.proto";
 
 package database.auth;
 
 
-service User {
+
+service UserAuthService {
     rpc CreateUser (CreateUserRequest) returns (BasicUserResponse) {}
     rpc GetUser (GetUserRequest) returns (BasicUserResponse) {}
     rpc GetUserByEmail (GetUserByEmailRequest) returns (BasicUserResponse) {}
@@ -57,7 +59,7 @@ message DeleteUserRequest {
 }
 
  
-service Session {
+service SessionAuthService {
     rpc CreateSession (SessionObj) returns (SessionObj) {}
     rpc GetSessionAndUser (GetSessionAndUserRequest) returns (GetSessionAndUserResponse) {}
     rpc UpdateSession (UpdateSessionRequest) returns (SessionObj) {}
@@ -89,7 +91,7 @@ message DeleteSessionRequest {
     string sessionToken = 1;
 }
 
-service VerificationToken {
+service VerificationTokenAuthService {
     rpc CreateVerificationToken (VerificationTokenObj) returns (VerificationTokenObj) {}
     rpc UseVerificationToken (UseVerificationTokenRequest) returns (VerificationTokenObj) {}
 }
@@ -106,7 +108,7 @@ message UseVerificationTokenRequest {
 }
 
 
-service Account {
+service AccountAuthService {
     rpc LinkAccount (AdapterAccount) returns (AdapterAccount) {}
     rpc UnlinkAccount (UnlinkAccountRequest) returns (AdapterAccount) {}
 }
