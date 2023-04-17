@@ -21,7 +21,7 @@ Este projeto tem como objetivo desenvolver um sistema que auxilie os professores
 
 ## Instalação
 
-[Em desenvolvimento]
+Este projeto é um trabalho em andamento e ainda não está disponível para instalação.
 
 ## Uso
 
