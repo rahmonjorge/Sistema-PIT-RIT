@@ -1,4 +1,4 @@
-# PRITTY
+# Sistema PIT-RIT
 
 ## Descrição
 
